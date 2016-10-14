@@ -80,7 +80,7 @@ public class Maze {
      */
     public void evaporate(double rho) {
     	for (int i = 0; i < pheromones.length; i++) {
-    		for (int j = 0; j < pheromones[i].length; i++) {
+    		for (int j = 0; j < pheromones[i].length; j++) {
     			pheromones[i][j] = (1 - rho) * pheromones[i][j];
     		}
     	}
