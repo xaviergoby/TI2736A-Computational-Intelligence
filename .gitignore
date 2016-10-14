@@ -1,0 +1,16 @@
+### Example user template template
+### Example user template
+
+# IntelliJ project files
+.idea
+*.iml
+out
+gen
+target
+# Created by .ignore support plugin (hsz.mobi)
+.classpath
+.project
+.settings/
+
+logs/
+dependency-reduced-pom.xml
