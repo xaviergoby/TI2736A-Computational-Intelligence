@@ -109,7 +109,12 @@ public class Maze {
      * @return the pheromones of the neighbouring positions.
      */
     public SurroundingPheromone getSurroundingPheromone(Coordinate position) {
-        return null;
+        double north = getPheromone(position.add(Direction.North));
+        double south = getPheromone(position.add(Direction.South));
+        double east = getPheromone(position.add(Direction.East));
+        double west = getPheromone(position.add(Direction.West));
+
+        return new SurroundingPheromone(north, east, south, west);
     }
 
     /**
