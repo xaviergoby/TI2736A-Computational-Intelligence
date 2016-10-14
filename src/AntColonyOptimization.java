@@ -27,6 +27,11 @@ public class AntColonyOptimization {
      */
     public Route findShortestRoute(PathSpecification spec) {
         maze.reset();
+        for (int generation = 0; generation < numberOfGenerations; generation++) {
+        	for (int ant = 0; ant < antsPerGeneration; ant++) {
+        		
+        	}
+        }
         return null;
     }
 
@@ -44,7 +49,7 @@ public class AntColonyOptimization {
         long startTime = System.currentTimeMillis();
         Route shortestRoute = aco.findShortestRoute(spec);
         System.out.println("Time taken: " + ((System.currentTimeMillis() - startTime) / 1000.0));
-        shortestRoute.writeToFile("./data/hard_solution.txt");
+        shortestRoute.writeToFile("./data/easy solution.txt");
         System.out.println(shortestRoute.size());
     }
 }
