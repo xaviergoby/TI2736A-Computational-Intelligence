@@ -6,18 +6,18 @@ import java.util.ArrayList;
  * path specification.
  */
 public class AntColonyOptimization {
-    private int antsPerGen;
-    private int generations;
-    private double Q;
-    private double evaporation;
+    private int antsPerGeneration;
+    private int numberOfGenerations;
+    private double qualityFactor;
+    private double evaporationFactor;
     private Maze maze;
 
-    public AntColonyOptimization(Maze maze, int antsPerGen, int generations, double Q, double evaporation) {
+    public AntColonyOptimization(Maze maze, int antsPerGeneration, int numberOfGenerations, double qualityFactor, double evaporationFactor) {
         this.maze = maze;
-        this.antsPerGen = antsPerGen;
-        this.generations = generations;
-        this.Q = Q;
-        this.evaporation = evaporation;
+        this.antsPerGeneration = antsPerGeneration;
+        this.numberOfGenerations = numberOfGenerations;
+        this.qualityFactor = qualityFactor;
+        this.evaporationFactor = evaporationFactor;
     }
 
     /**
@@ -34,13 +34,13 @@ public class AntColonyOptimization {
      * Driver function for Assignment 1
      */
     public static void main(String[] args) throws FileNotFoundException {
-        int gen = 1;
-        int noGen = 1;
-        double Q = 1600;
-        double evap = 0.1;
+        int antsPerGeneration = 1;
+        int numberOfGenerations = 1;
+        double qualityFactor = 1600;
+        double evaporationFactor = 0.1;
         Maze maze = Maze.createMaze("./data/easy maze.txt");
         PathSpecification spec = PathSpecification.readCoordinates("./data/easy coordinates.txt");
-        AntColonyOptimization aco = new AntColonyOptimization(maze, gen, noGen, Q, evap);
+        AntColonyOptimization aco = new AntColonyOptimization(maze, antsPerGeneration, numberOfGenerations, qualityFactor, evaporationFactor);
         long startTime = System.currentTimeMillis();
         Route shortestRoute = aco.findShortestRoute(spec);
         System.out.println("Time taken: " + ((System.currentTimeMillis() - startTime) / 1000.0));
