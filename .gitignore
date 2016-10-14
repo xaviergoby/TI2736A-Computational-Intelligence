@@ -11,6 +11,6 @@ target
 .classpath
 .project
 .settings/
-
+bin/
 logs/
 dependency-reduced-pom.xml

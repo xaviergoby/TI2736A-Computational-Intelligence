@@ -36,7 +36,9 @@ public class Maze {
     private void initializePheromones() {
         //Initialize pheromone array
         this.pheromones = new double[width][length];
-        Arrays.fill(pheromones, 1);
+        for (int i = 0; i < width; i++) {
+        	Arrays.fill(pheromones[i], 1);
+        }
     }
 
     /**
