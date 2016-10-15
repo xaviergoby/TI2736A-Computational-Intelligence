@@ -8,6 +8,10 @@ public enum Direction {
     East,
     West,
     South;
+	
+	private final int dx;
+	private final int dy;
+	
 
     private static Coordinate northVector = new Coordinate(0,-1);
     private static Coordinate southVector = new Coordinate(0,1);
@@ -41,5 +45,11 @@ public enum Direction {
             default:
                 throw new IllegalArgumentException("Case statement does not match all possible values");
         }
+    }
+    public int getDeltaX(){
+    	return dx;
+    }
+    public int getDeltaY(){
+    	return dy;
     }
 }

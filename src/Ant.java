@@ -10,6 +10,9 @@ public class Ant {
     private Coordinate end;
     private Coordinate currentPosition;
     private static Random rand;
+    //Double for pheromone drop
+    private pheromoneDrop;
+    
 
     /**
      * Constructor for ant taking a Maze and PathSpecification.
@@ -53,9 +56,16 @@ public class Ant {
      * move to method
      */
     public void moveTo(Direction dir){
-    	int newX = currentPosition.getXcoordinate() + dir.getDeltaX();
-    	int newY = currentPosiotn.getYcoordinate() + dir.getDeltaY();
+    	int newX = currentPosition.getXcoordinate().add(dir.getDeltaX());
+    	int newY = currentPosiotn.getYcoordinate().add(dir.getDeltaY());
     	currentPosition.setCoordinates(newX,newY);
+    }
+    
+    /**
+     * getPheromonedrop // KAN DIT???
+     */
+    public double getPheromoneDrop(){
+    	return pheromoneDrop.getPheromone(currentposition)
     }
 }
 
