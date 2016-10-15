@@ -34,5 +34,28 @@ public class Ant {
         Route route = new Route(start);
         return route;
     }
+    
+    /**
+     * get currentPosition
+     */
+    public Coordinate getCoordinates(){
+    	return currentPosition;
+    }
+    
+    /**
+     * set currentPosiont
+     */
+    public void setCoordinates(Coordinte currentPosition){
+    	this.currentPosition = currentPosition;
+    }
+    
+    /**
+     * move to method
+     */
+    public void moveTo(Direction dir){
+    	int newX = currentPosition.getXcoordinate() + dir.getDeltaX();
+    	int newY = currentPosiotn.getYcoordinate() + dir.getDeltaY();
+    	currentPosition.setCoordinates(newX,newY);
+    }
 }
 
