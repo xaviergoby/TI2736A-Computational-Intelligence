@@ -9,8 +9,8 @@ public enum Direction {
     West,
     South;
 	
-	private final int dx;
-	private final int dy;
+	private int dx;
+	private int dy;
 	
 
     private static Coordinate northVector = new Coordinate(0,-1);
