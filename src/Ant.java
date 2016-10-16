@@ -80,24 +80,13 @@ public class Ant {
     		
     		if (currentDir != null) {
     			dirs.remove(Direction.inverse(currentDir));
-    			
     			if (dirs.size() == 1) {
     				moveTo(dirs.get(0));
     				return;
     			}
     		}
     		
-    		List<Double> dirChances = new ArrayList<Double>();
-    		
-    		SurroundingPheromone surrPher = maze.getSurroundingPheromone(currentPosition);
-    		for (Direction dir : dirs) {
-    			double pheromoneOnDir = surrPher.get(dir);
-    			double totalPheromone = surrPher.getTotalSurroundingPheromone();
-    			double chooseChance = pheromoneOnDir / totalPheromone;
-    			dirChances.add(chooseChance);
-    		}
-    		
-    		Collections.sort(dirChances);
+    		List<Double> dirChances = getChances(dirs);
     		
     		double decision = new Random().nextDouble();
     		
@@ -108,6 +97,21 @@ public class Ant {
     			}
     		}
     	}
+    }
+    
+    public List<Double> getChances(List<Direction> dirs) {
+    	List<Double> dirChances = new ArrayList<Double>();
+		
+		SurroundingPheromone surrPher = maze.getSurroundingPheromone(currentPosition);
+		for (Direction dir : dirs) {
+			double pheromoneOnDir = surrPher.get(dir);
+			double totalPheromone = surrPher.getTotalSurroundingPheromone();
+			double chooseChance = pheromoneOnDir / totalPheromone;
+			dirChances.add(chooseChance);
+		}
+		
+		Collections.sort(dirChances);
+		return dirChances;
     }
     
     public List<Direction> getMovableDirs() {
