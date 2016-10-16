@@ -8,10 +8,6 @@ public enum Direction {
     East,
     West,
     South;
-	
-	private int dx;
-	private int dy;
-	
 
     private static Coordinate northVector = new Coordinate(0,-1);
     private static Coordinate southVector = new Coordinate(0,1);
@@ -31,6 +27,21 @@ public enum Direction {
     public static Coordinate dirToCoordinateDelta(Direction dir) {
         return dirToCoordinateDeltaMap.get(dir);
     }
+    
+    public static Direction inverse(Direction dir) {
+    	switch(dir) {
+        case North:
+            return South;
+        case South:
+            return North;
+        case East:
+            return West;
+        case West:
+            return East;
+        default:
+            throw new IllegalArgumentException("Case statement does not match all possible values");
+    	}
+    }
 
     public static int dirToInt(Direction dir) {
         switch(dir) {
@@ -45,11 +56,5 @@ public enum Direction {
             default:
                 throw new IllegalArgumentException("Case statement does not match all possible values");
         }
-    }
-    public int getDeltaX(){
-    	return dx;
-    }
-    public int getDeltaY(){
-    	return dy;
     }
 }

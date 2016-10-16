@@ -1,4 +1,6 @@
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Random;
@@ -11,7 +13,8 @@ public class Ant {
     private Coordinate start;
     private Coordinate end;
     private Coordinate currentPosition;
-    private static Random rand;    
+    private static Random rand;   
+    private Direction currentDir;
 
     /**
      * Constructor for ant taking a Maze and PathSpecification.
@@ -23,6 +26,7 @@ public class Ant {
         this.start = spec.getStart();
         this.end = spec.getEnd();
         this.currentPosition = start;
+        this.currentDir = null;
         if (rand == null) {
             rand = new Random();
         }
@@ -49,15 +53,23 @@ public class Ant {
      */
     public void setCoordinates(Coordinate currentPosition) {
     	this.currentPosition = currentPosition;
+    	this.currentDir = null;
     }
     
     /**
      * move to method
      */
     public void moveTo(Direction dir) {
+    	currentDir = dir;
     	currentPosition = currentPosition.add(dir);
     }
     
+    /**
+     * This method will move the Ant. If there is just one movable direction, the ant will go that way. If the
+     * ant has two ways, but one is the previous tile, it will remove that tile and proceed on to his path. If
+     * there are more options, the ant will not go back but check for surrounding pheromone, calculate the chance
+     * and then choose a direction.
+     */
     public void move() {
     	List<Direction> dirs = getMovableDirs();
     	
@@ -65,9 +77,35 @@ public class Ant {
     		// If you can just move to one dir, move to that dir.
     		moveTo(dirs.get(0));
     	} else {
-    		List<Double> dirChances = new ArrayList<Double>();
-    		for (Direction dir : dirs) {
+    		
+    		if (currentDir != null) {
+    			dirs.remove(Direction.inverse(currentDir));
     			
+    			if (dirs.size() == 1) {
+    				moveTo(dirs.get(0));
+    				return;
+    			}
+    		}
+    		
+    		List<Double> dirChances = new ArrayList<Double>();
+    		
+    		SurroundingPheromone surrPher = maze.getSurroundingPheromone(currentPosition);
+    		for (Direction dir : dirs) {
+    			double pheromoneOnDir = surrPher.get(dir);
+    			double totalPheromone = surrPher.getTotalSurroundingPheromone();
+    			double chooseChance = pheromoneOnDir / totalPheromone;
+    			dirChances.add(chooseChance);
+    		}
+    		
+    		Collections.sort(dirChances);
+    		
+    		double decision = new Random().nextDouble();
+    		
+    		for (int i = 0; i < dirChances.size(); i++) {
+    			if (decision <= dirChances.get(i)) {
+    				moveTo(dirs.get(i));
+    				break;
+    			}
     		}
     	}
     }
