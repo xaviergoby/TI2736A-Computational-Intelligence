@@ -87,6 +87,19 @@ public class Maze {
     		}
     	}
     }
+    
+    /**
+     * Check passability of tile.
+     * @param x The x coordinate.
+     * @param y The y coordindate.
+     * @return boolean The passability.
+     */
+    public boolean isPassable(Coordinate coordinate) {
+    	if (inBounds(coordinate)) {
+    		return (walls[coordinate.getX()][coordinate.getY()] == 1);
+    	}
+    	return false;
+    }
 
     /**
      * Width getter

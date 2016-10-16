@@ -1,4 +1,6 @@
+import java.util.ArrayList;
 import java.util.EnumMap;
+import java.util.List;
 import java.util.Random;
 
 /**
@@ -38,22 +40,53 @@ public class Ant {
     /**
      * get currentPosition
      */
-    public Coordinate getCoordinates(){
+    public Coordinate getCoordinates() {
     	return currentPosition;
     }
     
     /**
      * set currentPosiont
      */
-    public void setCoordinates(Coordinate currentPosition){
+    public void setCoordinates(Coordinate currentPosition) {
     	this.currentPosition = currentPosition;
     }
     
     /**
      * move to method
      */
-    public void moveTo(Direction dir){
-    	currentPosition.add(dir);
+    public void moveTo(Direction dir) {
+    	currentPosition = currentPosition.add(dir);
+    }
+    
+    public void move() {
+    	List<Direction> dirs = getMovableDirs();
+    	
+    	if (dirs.size() == 1) {
+    		// If you can just move to one dir, move to that dir.
+    		moveTo(dirs.get(0));
+    	} else {
+    		List<Double> dirChances = new ArrayList<Double>();
+    		for (Direction dir : dirs) {
+    			
+    		}
+    	}
+    }
+    
+    public List<Direction> getMovableDirs() {
+    	
+    	List<Direction> dirs = new ArrayList<>();
+    	
+    	if (maze.isPassable(currentPosition.add(Direction.North))) {
+    		dirs.add(Direction.North);
+    	} else if (maze.isPassable(currentPosition.add(Direction.East))) {
+    		dirs.add(Direction.East);
+    	} else if (maze.isPassable(currentPosition.add(Direction.South))) {
+    		dirs.add(Direction.South);
+    	} else if (maze.isPassable(currentPosition.add(Direction.West))) {
+    		dirs.add(Direction.West);
+    	}
+    	
+    	return dirs;
     }
 }
 
