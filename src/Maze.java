@@ -60,9 +60,13 @@ public class Maze {
         Coordinate current = start; //Begin at the start coordinate
         Iterator routeIterator = r.getRoute().iterator(); //Get an iterator off the directions in this route
         while(routeIterator.hasNext()){
-            current.add((Direction) routeIterator.next()); //Add the direction to the coordinate to get to a new coordinate
+            current = current.add((Direction) routeIterator.next()); //Add the direction to the coordinate to get to a new coordinate
             pheromones[current.getX()][current.getY()] += newPheromone; //Add the pheromone to the coordinate
         }
+    }
+    
+    public void addPheromoneToCoordinate(Coordinate co, double q) {
+    	pheromones[co.getX()][co.getY()] += q;
     }
 
     /**

@@ -13,7 +13,7 @@ public class AntColonyOptimization {
     private double evaporationFactor;
     private Maze maze;
     private List<Ant> ants;
-
+ 
     public AntColonyOptimization(Maze maze, int antsPerGeneration, int numberOfGenerations, double qualityFactor, double evaporationFactor) {
         this.maze = maze;
         this.antsPerGeneration = antsPerGeneration;
@@ -32,28 +32,40 @@ public class AntColonyOptimization {
         maze.reset();
         for (int generation = 0; generation < numberOfGenerations; generation++) {
         	for (int ant = 0; ant < antsPerGeneration; ant++) {
-        		ants.add(new Ant(maze,spec));
+        		Ant currentAnt = new Ant(maze,spec);
+        		currentAnt.findRoute();
+        		ants.add(currentAnt);
         		maze.evaporate(evaporationFactor);
         	}
         }
-        return ants.get(ants.size()-1).findRoute();
+        
+        Ant bestAnt = ants.get(0);
+        
+        for (Ant a : ants) {
+        	if (a.findRoute().size() < bestAnt.findRoute().size()) {
+        		bestAnt = a;
+        	}
+        }
+        
+        return bestAnt.findRoute();
     }
 
     /**
-     * Driver function for Assignment 1
+     * Driver function for Assignment 1.
+     * Easy solution: gen = 1000, ants = 50
      */
     public static void main(String[] args) throws FileNotFoundException {
-        int antsPerGeneration = 5;
-        int numberOfGenerations = 10;
+        int antsPerGeneration = 50;
+        int numberOfGenerations = 500;
         double qualityFactor = 1600;
         double evaporationFactor = 0.1;
-        Maze maze = Maze.createMaze("./data/medium maze.txt");
-        PathSpecification spec = PathSpecification.readCoordinates("./data/medium coordinates.txt");
+        Maze maze = Maze.createMaze("./data/easy maze.txt");
+        PathSpecification spec = PathSpecification.readCoordinates("./data/easy coordinates.txt");
         AntColonyOptimization aco = new AntColonyOptimization(maze, antsPerGeneration, numberOfGenerations, qualityFactor, evaporationFactor);
         long startTime = System.currentTimeMillis();
         Route shortestRoute = aco.findShortestRoute(spec);
         System.out.println("Time taken: " + ((System.currentTimeMillis() - startTime) / 1000.0));
-        shortestRoute.writeToFile("./data/medium solution.txt");
+        shortestRoute.writeToFile("./data/easy solution.txt");
         System.out.println(shortestRoute.size());
     }
 }

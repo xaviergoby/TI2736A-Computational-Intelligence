@@ -15,6 +15,7 @@ public class Ant {
     private Coordinate currentPosition;
     private static Random rand;   
     private Direction currentDir;
+    private Route route;
 
     /**
      * Constructor for ant taking a Maze and PathSpecification.
@@ -27,6 +28,7 @@ public class Ant {
         this.end = spec.getEnd();
         this.currentPosition = start;
         this.currentDir = null;
+        this.route = new Route(start);
         if (rand == null) {
             rand = new Random();
         }
@@ -37,10 +39,15 @@ public class Ant {
      * @return The route the ant found through the maze.
      */
     public Route findRoute() {
-        Route route = new Route(start);
+    	if (route.size() > 0) {
+    		return route;
+    	}
+    	
         while (!(currentPosition.equals(end))) {
-        	move(route);
+        	move();
+        	maze.addPheromoneToCoordinate(currentPosition, 10);
         }
+        
         return route;
     }
     
@@ -62,9 +69,8 @@ public class Ant {
     /**
      * move to method
      */
-    public void moveTo(Direction dir, Route r) {
-//    	System.out.println("Moved to " + dir);
-    	r.add(dir);
+    public void moveTo(Direction dir) {
+    	route.add(dir);
     	currentDir = dir;
     	currentPosition = currentPosition.add(dir);
     }
@@ -75,19 +81,18 @@ public class Ant {
      * there are more options, the ant will not go back but check for surrounding pheromone, calculate the chance
      * and then choose a direction.
      */
-    public void move(Route r) {
+    public void move() {
     	List<Direction> dirs = getMovableDirs();
     	
     	if (dirs.size() == 1) {
     		// If you can just move to one dir, move to that dir.
-    		moveTo(dirs.get(0), r);
+    		moveTo(dirs.get(0));
     		
     	} else {
     		if (currentDir != null) {
-    			System.out.println(Direction.inverse(currentDir));
     			dirs.remove(Direction.inverse(currentDir));
     			if (dirs.size() == 1) {
-    				moveTo(dirs.get(0), r);
+    				moveTo(dirs.get(0));
     				return;
     			}
     		}
@@ -98,7 +103,7 @@ public class Ant {
     		
     		for (int i = 0; i < dirChances.size(); i++) {
     			if (decision <= dirChances.get(i)) {
-    				moveTo(dirs.get(i), r);
+    				moveTo(dirs.get(i));
     				break;
     			}
     		}
