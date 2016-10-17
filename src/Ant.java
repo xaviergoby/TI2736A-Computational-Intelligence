@@ -38,6 +38,9 @@ public class Ant {
      */
     public Route findRoute() {
         Route route = new Route(start);
+        while (!(currentPosition.equals(end))) {
+        	move(route);
+        }
         return route;
     }
     
@@ -59,7 +62,9 @@ public class Ant {
     /**
      * move to method
      */
-    public void moveTo(Direction dir) {
+    public void moveTo(Direction dir, Route r) {
+//    	System.out.println("Moved to " + dir);
+    	r.add(dir);
     	currentDir = dir;
     	currentPosition = currentPosition.add(dir);
     }
@@ -70,18 +75,19 @@ public class Ant {
      * there are more options, the ant will not go back but check for surrounding pheromone, calculate the chance
      * and then choose a direction.
      */
-    public void move() {
+    public void move(Route r) {
     	List<Direction> dirs = getMovableDirs();
     	
     	if (dirs.size() == 1) {
     		// If you can just move to one dir, move to that dir.
-    		moveTo(dirs.get(0));
-    	} else {
+    		moveTo(dirs.get(0), r);
     		
+    	} else {
     		if (currentDir != null) {
+    			System.out.println(Direction.inverse(currentDir));
     			dirs.remove(Direction.inverse(currentDir));
     			if (dirs.size() == 1) {
-    				moveTo(dirs.get(0));
+    				moveTo(dirs.get(0), r);
     				return;
     			}
     		}
@@ -92,7 +98,7 @@ public class Ant {
     		
     		for (int i = 0; i < dirChances.size(); i++) {
     			if (decision <= dirChances.get(i)) {
-    				moveTo(dirs.get(i));
+    				moveTo(dirs.get(i), r);
     				break;
     			}
     		}
@@ -120,11 +126,14 @@ public class Ant {
     	
     	if (maze.isPassable(currentPosition.add(Direction.North))) {
     		dirs.add(Direction.North);
-    	} else if (maze.isPassable(currentPosition.add(Direction.East))) {
+    	} 
+    	if (maze.isPassable(currentPosition.add(Direction.East))) {
     		dirs.add(Direction.East);
-    	} else if (maze.isPassable(currentPosition.add(Direction.South))) {
+    	}
+    	if (maze.isPassable(currentPosition.add(Direction.South))) {
     		dirs.add(Direction.South);
-    	} else if (maze.isPassable(currentPosition.add(Direction.West))) {
+    	} 
+    	if (maze.isPassable(currentPosition.add(Direction.West))) {
     		dirs.add(Direction.West);
     	}
     	
