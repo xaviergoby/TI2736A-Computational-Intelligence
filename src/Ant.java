@@ -27,7 +27,9 @@ public class Ant {
         this.end = spec.getEnd();
         this.currentPosition = start;
         this.currentDir = null;
-		this.rand = new Random();
+        if (rand == null) {
+            rand = new Random();
+        }
     }
 
     /**
@@ -36,9 +38,6 @@ public class Ant {
      */
     public Route findRoute() {
         Route route = new Route(start);
-		while(!currentPosition.equals(end)) {
-			route.add(move());
-		}
         return route;
     }
     
@@ -71,20 +70,19 @@ public class Ant {
      * there are more options, the ant will not go back but check for surrounding pheromone, calculate the chance
      * and then choose a direction.
      */
-    public Direction move() {
+    public void move() {
     	List<Direction> dirs = getMovableDirs();
     	
     	if (dirs.size() == 1) {
     		// If you can just move to one dir, move to that dir.
     		moveTo(dirs.get(0));
-			return dirs.get(0);
     	} else {
     		
     		if (currentDir != null) {
     			dirs.remove(Direction.inverse(currentDir));
     			if (dirs.size() == 1) {
     				moveTo(dirs.get(0));
-    				return dirs.get(0);
+    				return;
     			}
     		}
     		
@@ -95,11 +93,10 @@ public class Ant {
     		for (int i = 0; i < dirChances.size(); i++) {
     			if (decision <= dirChances.get(i)) {
     				moveTo(dirs.get(i));
-    				return dirs.get(i);
+    				break;
     			}
     		}
     	}
-    	return null;
     }
     
     public List<Double> getChances(List<Direction> dirs) {

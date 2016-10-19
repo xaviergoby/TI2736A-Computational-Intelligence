@@ -1,6 +1,5 @@
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Class representing the first assignment. Finds shortest path between two points in a maze according to a specific
@@ -28,19 +27,12 @@ public class AntColonyOptimization {
      */
     public Route findShortestRoute(PathSpecification spec) {
         maze.reset();
-        Route shortest = null;
-        for (int generation = 1; generation <= numberOfGenerations; generation++) {
-            List<Route> routes = new ArrayList<>();
+        for (int generation = 0; generation < numberOfGenerations; generation++) {
         	for (int ant = 0; ant < antsPerGeneration; ant++) {
-        		routes.add(new Ant(maze, spec).findRoute());
+        		
         	}
-            maze.evaporate(evaporationFactor);
-            maze.addPheromoneRoutes(routes, qualityFactor);
-            if(generation == numberOfGenerations) {
-                shortest = routes.get(antsPerGeneration-1);
-            }
         }
-        return shortest;
+        return null;
     }
 
     /**
