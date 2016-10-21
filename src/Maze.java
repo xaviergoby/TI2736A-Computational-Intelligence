@@ -104,23 +104,6 @@ public class Maze {
     }
 
     /**
-     * Width getter
-     * @return width of the maze
-     */
-    public int getWidth() {
-        return width;
-    }
-
-    /**
-     * Length getter
-     * @return length of the maze
-     */
-    public int getLength() {
-        return length;
-    }
-
-
-    /**
      * Returns a the amount of pheromones on the neighbouring positions (N/S/E/W).
      * @param position The position to check the neighbours of.
      * @return the pheromones of the neighbouring positions.
