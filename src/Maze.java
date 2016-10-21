@@ -14,8 +14,6 @@ public class Maze {
     private int length;
     private int[][] walls;
     private double[][] pheromones;
-    private Coordinate start;
-    private Coordinate end;
 
     /**
      * Constructor of a maze
@@ -57,11 +55,10 @@ public class Maze {
         //Compute pheromone to add to each coordinate
         double newPheromone = Q/r.size();
 
-        Coordinate current = start; //Begin at the start coordinate
-        Iterator routeIterator = r.getRoute().iterator(); //Get an iterator off the directions in this route
-        while(routeIterator.hasNext()){
-            current = current.add((Direction) routeIterator.next()); //Add the direction to the coordinate to get to a new coordinate
+        Coordinate current = r.getStart(); //Begin at the start coordinate
+        for (Direction dir : r.getRoute()) {
             pheromones[current.getX()][current.getY()] += newPheromone; //Add the pheromone to the coordinate
+            current = current.add(dir); //Add the direction to the coordinate to get to a new coordinate
         }
     }
     

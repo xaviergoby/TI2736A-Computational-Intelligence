@@ -16,19 +16,21 @@ public class Ant {
     private static Random rand;   
     private Direction currentDir;
     private Route route;
+    private double qualityFactor;
 
     /**
      * Constructor for ant taking a Maze and PathSpecification.
      * @param maze Maze the ant will be running in.
      * @param spec The path specification consisting of a start coordinate and an end coordinate.
      */
-    public Ant(Maze maze, PathSpecification spec) {
+    public Ant(Maze maze, PathSpecification spec, double qFactor) {
         this.maze = maze;
         this.start = spec.getStart();
         this.end = spec.getEnd();
         this.currentPosition = start;
         this.currentDir = null;
         this.route = new Route(start);
+        this.qualityFactor = qFactor;
         if (rand == null) {
             rand = new Random();
         }
@@ -45,8 +47,9 @@ public class Ant {
     	
         while (!(currentPosition.equals(end))) {
         	move();
-        	maze.addPheromoneToCoordinate(currentPosition, 10);
         }
+        
+        maze.addPheromoneRoute(route, qualityFactor);
         
         return route;
     }

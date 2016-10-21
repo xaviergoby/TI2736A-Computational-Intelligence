@@ -32,7 +32,7 @@ public class AntColonyOptimization {
         maze.reset();
         for (int generation = 1; generation <= numberOfGenerations; generation++) {
         	for (int ant = 0; ant < antsPerGeneration; ant++) {
-        		Ant currentAnt = new Ant(maze,spec);
+        		Ant currentAnt = new Ant(maze,spec, qualityFactor);
         		currentAnt.findRoute();
                 if(generation == numberOfGenerations){
                     //Add last generation ants to a list
@@ -60,8 +60,8 @@ public class AntColonyOptimization {
     public static void main(String[] args) throws FileNotFoundException {
         String mazeName = "easy";
         int antsPerGeneration = 50;
-        int numberOfGenerations = 500;
-        double qualityFactor = 1600;
+        int numberOfGenerations = 1000;
+        double qualityFactor = 100;
         double evaporationFactor = 0.1;
         Maze maze = Maze.createMaze("./data/"+mazeName+" maze.txt");
         PathSpecification spec = PathSpecification.readCoordinates("./data/"+mazeName+" coordinates.txt");
