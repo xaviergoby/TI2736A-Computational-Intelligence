@@ -1,7 +1,6 @@
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Scanner;
 
@@ -10,6 +9,9 @@ import java.util.Scanner;
  * well as the starting and end coordinates.
  */
 public class Maze {
+
+    private final double INITIAL_PHEROMONE_VALUE = 1;
+
     private int width;
     private int length;
     private int[][] walls;
@@ -25,17 +27,17 @@ public class Maze {
         this.walls = walls;
         this.length = length;
         this.width = width;
-        initializePheromones();
+        initializePheromones(INITIAL_PHEROMONE_VALUE);
     }
 
     /**
-     * Initialize pheromones to a start value.
+     * Initialize the maze to hold pheromoneValue in all blocks
+     * @param pheromoneValue The amount of pheromones that should be in the maze.
      */
-    private void initializePheromones() {
-        //Initialize pheromone array
+    private void initializePheromones(double pheromoneValue) {
         this.pheromones = new double[width][length];
         for (double[] row : pheromones) {
-        	Arrays.fill(row, 1);
+        	Arrays.fill(row, pheromoneValue);
         }
     }
 
@@ -43,7 +45,7 @@ public class Maze {
      * Reset the maze for a new shortest path problem.
      */
     public void reset() {
-        initializePheromones();
+        initializePheromones(INITIAL_PHEROMONE_VALUE);
     }
 
     /**
