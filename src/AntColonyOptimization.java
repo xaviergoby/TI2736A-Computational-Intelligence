@@ -30,27 +30,18 @@ public class AntColonyOptimization {
      */
     public Route findShortestRoute(PathSpecification spec) {
         maze.reset();
+        Route shortestRoute = null;
         for (int generation = 1; generation <= numberOfGenerations; generation++) {
         	for (int ant = 0; ant < antsPerGeneration; ant++) {
         		Ant currentAnt = new Ant(maze,spec, qualityFactor);
-        		currentAnt.findRoute();
-                if(generation == numberOfGenerations){
-                    //Add last generation ants to a list
-                    ants.add(currentAnt);
-                }
+                currentAnt.findRoute();
+                if(shortestRoute== null || currentAnt.findRoute().size() < shortestRoute.size());
+                    shortestRoute = currentAnt.findRoute();
         	}
             maze.evaporate(evaporationFactor); //Evaporate after every generation
         }
-        
-        Ant bestAnt = ants.get(0);
-        
-        for (Ant a : ants) {
-        	if (a.findRoute().size() < bestAnt.findRoute().size()) {
-        		bestAnt = a;
-        	}
-        }
-        
-        return bestAnt.findRoute();
+
+        return shortestRoute;
     }
 
     /**
