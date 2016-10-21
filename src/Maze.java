@@ -93,8 +93,7 @@ public class Maze {
     
     /**
      * Check passability of tile.
-     * @param x The x coordinate.
-     * @param y The y coordindate.
+     * @param coordinate The coordinate.
      * @return boolean The passability.
      */
     public boolean isPassable(Coordinate coordinate) {
