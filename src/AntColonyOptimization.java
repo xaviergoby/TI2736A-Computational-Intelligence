@@ -33,12 +33,13 @@ public class AntColonyOptimization {
         maze.reset();
         Route shortestRoute = new Ant(maze, spec).findRoute();
         for (int generation = 1; generation <= numberOfGenerations; generation++) {
-        	for (int ant = 0; ant < antsPerGeneration; ant++) {
+        	for (int ant = 1; ant < antsPerGeneration; ant++) {
         		Ant currentAnt = new Ant(maze, spec);
                 Route route = currentAnt.findRoute();
                 routes.add(route);
-                if(currentAnt.findRoute().shorterThan(shortestRoute));
+                if(currentAnt.findRoute().shorterThan(shortestRoute)) {
                     shortestRoute = currentAnt.findRoute();
+                }
         	}
         	maze.addPheromoneRoutes(routes, qualityFactor);
             routes.clear();
