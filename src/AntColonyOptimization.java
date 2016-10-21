@@ -13,7 +13,7 @@ public class AntColonyOptimization {
     private double evaporationFactor;
     private Maze maze;
     private List<Ant> ants;
-    private List<Route> routes;
+    private List<Route> routes = new ArrayList<>();
  
     public AntColonyOptimization(Maze maze, int antsPerGeneration, int numberOfGenerations, double qualityFactor, double evaporationFactor) {
         this.maze = maze;
