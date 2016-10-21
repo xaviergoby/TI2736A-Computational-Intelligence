@@ -55,17 +55,18 @@ public class AntColonyOptimization {
      * Easy solution: gen = 1000, ants = 50
      */
     public static void main(String[] args) throws FileNotFoundException {
+        String mazeName = "easy";
         int antsPerGeneration = 50;
         int numberOfGenerations = 500;
         double qualityFactor = 1600;
         double evaporationFactor = 0.1;
-        Maze maze = Maze.createMaze("./data/easy maze.txt");
-        PathSpecification spec = PathSpecification.readCoordinates("./data/easy coordinates.txt");
+        Maze maze = Maze.createMaze("./data/"+mazeName+" maze.txt");
+        PathSpecification spec = PathSpecification.readCoordinates("./data/"+mazeName+" coordinates.txt");
         AntColonyOptimization aco = new AntColonyOptimization(maze, antsPerGeneration, numberOfGenerations, qualityFactor, evaporationFactor);
         long startTime = System.currentTimeMillis();
         Route shortestRoute = aco.findShortestRoute(spec);
         System.out.println("Time taken: " + ((System.currentTimeMillis() - startTime) / 1000.0));
-        shortestRoute.writeToFile("./data/easy solution.txt");
+        shortestRoute.writeToFile("./data/"+mazeName+" solution.txt");
         System.out.println(shortestRoute.size());
     }
 }
