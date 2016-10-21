@@ -1,7 +1,5 @@
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.EnumMap;
 import java.util.List;
 import java.util.Random;
 
@@ -16,21 +14,19 @@ public class Ant {
     private static Random rand;   
     private Direction currentDir;
     private Route route;
-    private double qualityFactor;
 
     /**
      * Constructor for ant taking a Maze and PathSpecification.
      * @param maze Maze the ant will be running in.
      * @param spec The path specification consisting of a start coordinate and an end coordinate.
      */
-    public Ant(Maze maze, PathSpecification spec, double qFactor) {
+    public Ant(Maze maze, PathSpecification spec) {
         this.maze = maze;
         this.start = spec.getStart();
         this.end = spec.getEnd();
         this.currentPosition = start;
         this.currentDir = null;
         this.route = new Route(start);
-        this.qualityFactor = qFactor;
         if (rand == null) {
             rand = new Random();
         }
@@ -48,8 +44,6 @@ public class Ant {
         while (!(currentPosition.equals(end))) {
         	move();
         }
-        
-        maze.addPheromoneRoute(route, qualityFactor);
         
         return route;
     }

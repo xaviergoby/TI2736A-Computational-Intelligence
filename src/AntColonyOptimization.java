@@ -13,6 +13,7 @@ public class AntColonyOptimization {
     private double evaporationFactor;
     private Maze maze;
     private List<Ant> ants;
+    private List<Route> routes;
  
     public AntColonyOptimization(Maze maze, int antsPerGeneration, int numberOfGenerations, double qualityFactor, double evaporationFactor) {
         this.maze = maze;
@@ -30,16 +31,19 @@ public class AntColonyOptimization {
      */
     public Route findShortestRoute(PathSpecification spec) {
         maze.reset();
-        Route shortestRoute = new Ant(maze,spec,qualityFactor).findRoute();
+        Route shortestRoute = new Ant(maze, spec).findRoute();
         for (int generation = 1; generation <= numberOfGenerations; generation++) {
-        	for (int ant = 1; ant < antsPerGeneration; ant++) {
-        		Ant currentAnt = new Ant(maze,spec, qualityFactor);
-        		if (currentAnt.findRoute().shorterThan(shortestRoute)){
-        			shortestRoute = currentAnt.findRoute();
-        		}
+        	for (int ant = 0; ant < antsPerGeneration; ant++) {
+        		Ant currentAnt = new Ant(maze, spec);
+                Route route = currentAnt.findRoute();
+                routes.add(route);
+                if(currentAnt.findRoute().shorterThan(shortestRoute));
+                    shortestRoute = currentAnt.findRoute();
         	}
-        	maze.evaporate(evaporationFactor); //Evaporate after every generation
-        }        
+        	maze.addPheromoneRoutes(routes, qualityFactor);
+            routes.clear();
+            maze.evaporate(evaporationFactor); //Evaporate after every generation
+        }
         return shortestRoute;
     }
 
