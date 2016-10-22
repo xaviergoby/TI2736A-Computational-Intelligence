@@ -12,8 +12,6 @@ public class AntColonyOptimization {
     private double qualityFactor;
     private double evaporationFactor;
     private Maze maze;
-    private List<Ant> ants;
-    private List<Route> routes = new ArrayList<>();
  
     public AntColonyOptimization(Maze maze, int antsPerGeneration, int numberOfGenerations, double qualityFactor, double evaporationFactor) {
         this.maze = maze;
@@ -21,26 +19,29 @@ public class AntColonyOptimization {
         this.numberOfGenerations = numberOfGenerations;
         this.qualityFactor = qualityFactor;
         this.evaporationFactor = evaporationFactor;
-        this.ants = new ArrayList<>();
     }
 
     /**
-     * Loop that starts the shortest path process
-     * @param spec Spefication of the route we wish to optimize
-     * @return ACO optimized route
+     * Finds the shortest route by applying ACO.
+     * Loops through all ants in a generation and:
+     *      Finds the shortest route between them
+     *      Applies pheromones over all routes
+     *      Evaporates the maze
+     * This happens for all generations, then the shortest route is returned.
+     * @param spec {@link PathSpecification} of the route we wish to optimize.
+     * @return ACO optimized {@link Route}.
      */
     public Route findShortestRoute(PathSpecification spec) {
         maze.reset();
+        List<Route> routes = new ArrayList<>();
         Route shortestRoute = new Ant(maze, spec).findRoute();
         for (int generation = 1; generation <= numberOfGenerations; generation++) {
         	for (int ant = 1; ant < antsPerGeneration; ant++) {
         		Ant currentAnt = new Ant(maze, spec);
                 Route route = currentAnt.findRoute();
                 routes.add(route);
-                if(currentAnt.findRoute().shorterThan(shortestRoute)) {
-                    shortestRoute = currentAnt.findRoute();
-                }
         	}
+            for (Route route: routes) if (route.shorterThan(shortestRoute)) shortestRoute = route;
         	maze.addPheromoneRoutes(routes, qualityFactor);
             routes.clear();
             maze.evaporate(evaporationFactor); //Evaporate after every generation
