@@ -10,7 +10,7 @@ import java.util.Scanner;
  */
 public class Maze {
 
-    private final double INITIAL_PHEROMONE_VALUE = 1;
+    private final double INITIAL_PHEROMONE_VALUE = 100;
 
     private int width;
     private int length;
