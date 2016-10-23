@@ -1,6 +1,5 @@
 import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 
@@ -31,13 +30,17 @@ public class Maze {
     }
 
     /**
-     * Initialize the maze to hold pheromoneValue in all blocks
+     * Initialize the maze to hold pheromoneValue in all accessible tiles.
      * @param pheromoneValue The amount of pheromones that should be in the maze.
      */
     private void initializePheromones(double pheromoneValue) {
         this.pheromones = new double[width][length];
-        for (double[] row : pheromones) {
-        	Arrays.fill(row, pheromoneValue);
+        for (int i = 0; i < pheromones.length; i++) {
+            for (int j = 0; j < pheromones[i].length; j++) {
+                if (walls[i][j] == 1) {
+                    pheromones[i][j] = pheromoneValue;
+                }
+            }
         }
     }
 
