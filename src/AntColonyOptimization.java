@@ -12,7 +12,7 @@ public class AntColonyOptimization {
     private double qualityFactor;
     private double evaporationFactor;
     private Maze maze;
-    private boolean DEBUG = false;
+    public static boolean DEBUG = true;
  
     public AntColonyOptimization(Maze maze, int antsPerGeneration, int numberOfGenerations, double qualityFactor, double evaporationFactor) {
         this.maze = maze;
@@ -33,7 +33,6 @@ public class AntColonyOptimization {
      * @return ACO optimized {@link Route}.
      */
     public Route findShortestRoute(PathSpecification spec) {
-        maze.reset();
         List<Route> routes = new ArrayList<>();
         Route shortestRoute = new Ant(maze, spec).findRoute();
         

@@ -31,16 +31,43 @@ public class Maze {
 
     /**
      * Initialize the maze to hold pheromoneValue in all accessible tiles.
+     * This will exclude any accessible tile that is not at least surrounded by one wall.
+     *      This makes sure that the inside of courtyards are not initialized.
+     *      This exclusion will not happen at the borders of the maze.
      * @param pheromoneValue The amount of pheromones that should be in the maze.
      */
     private void initializePheromones(double pheromoneValue) {
+        long startTime = System.currentTimeMillis();
         this.pheromones = new double[width][length];
         for (int i = 0; i < pheromones.length; i++) {
             for (int j = 0; j < pheromones[i].length; j++) {
                 if (walls[i][j] == 1) {
-                    pheromones[i][j] = pheromoneValue;
+                    // Only initialize pheromones if an adjacent tile is a wall.
+                    // Done to prevent moving over courtyards.
+                    if (
+                            i == 0 ||
+                            i == pheromones.length -1 ||
+                            j == 0 ||
+                            j == pheromones[i].length -1 ||
+                            walls[i-1][j-1] == 0 ||
+                            walls[i-1][j] == 0 ||
+                            walls[i-1][j+1] == 0 ||
+                            walls[i][j-1] == 0 ||
+                            walls[i][j+1] == 0 ||
+                            walls[i+1][j-1] == 0 ||
+                            walls[i+1][j] == 0 ||
+                            walls[i+1][j+1] == 0
+                    ) {
+                        pheromones[i][j] = pheromoneValue;
+                    }
                 }
             }
+        }
+        System.out.println("[Maze] Initialization completed!");
+        System.out.println("[Maze] Time taken: " + ((System.currentTimeMillis() - startTime) / 1000.0));
+        if (AntColonyOptimization.DEBUG) {
+            System.out.println("[Maze] Pheromone maze:");
+            System.out.println(pheromonesToString());
         }
     }
 
@@ -138,6 +165,27 @@ public class Maze {
     private boolean inBounds(Coordinate position) {
         return position.xBetween(0, width) && position.yBetween(0, length);
     }
+
+    public String pheromonesToString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(width);
+        sb.append(' ');
+        sb.append(length);
+        sb.append(" \n");
+        for (int y = 0; y < length; y++) {
+            for (int x = 0; x < width; x++ ) {
+                if (pheromones[x][y]!=0) {
+                    sb.append("X");
+                } else {
+                    sb.append(" ");
+                }
+                sb.append(' ');
+            }
+            sb.append("\n");
+        }
+        return sb.toString();
+    }
+
 
     /**
      * Representation of Maze as defined by the input file format.
