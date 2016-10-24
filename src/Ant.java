@@ -14,6 +14,7 @@ public class Ant {
     private static Random rand;   
     private Direction currentDir;
     private Route route;
+    private List<Coordinate> memory;
 
     /**
      * Constructor for ant taking a Maze and PathSpecification.
@@ -27,6 +28,10 @@ public class Ant {
         this.currentPosition = start;
         this.currentDir = null;
         this.route = new Route(start);
+        this.memory = new ArrayList<>();
+        
+        memory.add(currentPosition);
+        
         if (rand == null) {
             rand = new Random();
         }
@@ -67,9 +72,11 @@ public class Ant {
      * move to method
      */
     public void moveTo(Direction dir) {
+//    	System.out.println("Moved to : " + dir);
     	route.add(dir);
     	currentDir = dir;
     	currentPosition = currentPosition.add(dir);
+    	memory.add(currentPosition);
     }
     
     /**
@@ -94,10 +101,16 @@ public class Ant {
     			}
     		}
     		
+    		// checks if the ant hasnt been to that coordinate
+    		
+    		List<Direction> unvisited = getUnvisitedDirs(dirs);
+    		if (unvisited.size() > 0) {
+    			dirs = unvisited;
+    		}
     		
     		
-    		// from this moment on, the ant get choose a dir, we will prefer dirs which are close to walls
-    		// if there are directiosn which are close to walls, then choose between those.
+    		// from this moment on, the ant gets to choose a dir, we will prefer dirs which are close to walls
+    		// if there are directions which are close to walls, then choose between those.
     		
     		List<Direction> closeToWalls = getCloseToWalls(dirs);
     		if (closeToWalls.size() > 0) {
@@ -132,6 +145,29 @@ public class Ant {
 		return dirChances;
     }
     
+    /**
+     * Searches the memory for already visited Directions.
+     * @param dirs The Directions to search in.
+     * @return List<Direction> The unvisited Directions.
+     */
+    public List<Direction> getUnvisitedDirs(List<Direction> dirs) {
+    	List<Direction> unvisited = new ArrayList<>();
+    	for (Direction dir : dirs) {
+    		for (Coordinate co : memory) {
+    			if (currentPosition.add(dir).equals(co)) {
+    				break;
+    			}
+    		}
+    		unvisited.add(dir);
+    	}
+    	return unvisited;
+    }
+    
+    /**
+     * Gets the Directions which are close to walls.
+     * @param dirs The Directions to search in.
+     * @return List<Direction> The Directions that are close to walls.
+     */
     public List<Direction> getCloseToWalls(List<Direction> dirs) {
     	List<Direction> closeToWalls = new ArrayList<>();
     	

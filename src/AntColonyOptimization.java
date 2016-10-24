@@ -12,7 +12,7 @@ public class AntColonyOptimization {
     private double qualityFactor;
     private double evaporationFactor;
     private Maze maze;
-    private boolean DEBUG = false;
+    private boolean DEBUG = true;
  
     public AntColonyOptimization(Maze maze, int antsPerGeneration, int numberOfGenerations, double qualityFactor, double evaporationFactor) {
         this.maze = maze;
@@ -36,10 +36,12 @@ public class AntColonyOptimization {
         maze.reset();
         List<Route> routes = new ArrayList<>();
         Route shortestRoute = new Ant(maze, spec).findRoute();
+        
         for (int generation = 1; generation <= numberOfGenerations; generation++) {
         	if (DEBUG) System.out.println("Generation: " + generation);
             for (int ant = 1; ant < antsPerGeneration; ant++) {
                 if (DEBUG) System.out.println("Ant: " + ant);
+                
         		Ant currentAnt = new Ant(maze, spec);
                 Route route = currentAnt.findRoute();
                 routes.add(route);
@@ -57,7 +59,7 @@ public class AntColonyOptimization {
      * Easy solution: gen = 1000, ants = 50
      */
     public static void main(String[] args) throws FileNotFoundException {
-        String mazeName = "easy";
+        String mazeName = "medium";
         int antsPerGeneration = 100;
         int numberOfGenerations = 100;
         double qualityFactor = 2000;
