@@ -166,6 +166,10 @@ public class Maze {
         return position.xBetween(0, width) && position.yBetween(0, length);
     }
 
+    /**
+     * Representation of Maze's pheromones as defined by the input file format.
+     * @return String representation
+     */
     public String pheromonesToString() {
         StringBuilder sb = new StringBuilder();
         sb.append(width);
