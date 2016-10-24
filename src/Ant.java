@@ -147,6 +147,7 @@ public class Ant {
     
     /**
      * Searches the memory for already visited Directions.
+     * Greedy algorithm!
      * @param dirs The Directions to search in.
      * @return List<Direction> The unvisited Directions.
      */

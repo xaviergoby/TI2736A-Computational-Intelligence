@@ -12,7 +12,7 @@ public class AntColonyOptimization {
     private double qualityFactor;
     private double evaporationFactor;
     private Maze maze;
-    private boolean DEBUG = true;
+    private boolean DEBUG = false;
  
     public AntColonyOptimization(Maze maze, int antsPerGeneration, int numberOfGenerations, double qualityFactor, double evaporationFactor) {
         this.maze = maze;
@@ -59,7 +59,7 @@ public class AntColonyOptimization {
      * Easy solution: gen = 1000, ants = 50
      */
     public static void main(String[] args) throws FileNotFoundException {
-        String mazeName = "medium";
+        String mazeName = "easy";
         int antsPerGeneration = 100;
         int numberOfGenerations = 100;
         double qualityFactor = 2000;
