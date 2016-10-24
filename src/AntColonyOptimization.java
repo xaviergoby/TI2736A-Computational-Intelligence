@@ -12,7 +12,7 @@ public class AntColonyOptimization {
     private double qualityFactor;
     private double evaporationFactor;
     private Maze maze;
-    public static boolean DEBUG = true;
+    public static boolean DEBUG = false;
  
     public AntColonyOptimization(Maze maze, int antsPerGeneration, int numberOfGenerations, double qualityFactor, double evaporationFactor) {
         this.maze = maze;
@@ -35,7 +35,6 @@ public class AntColonyOptimization {
     public Route findShortestRoute(PathSpecification spec) {
         List<Route> routes = new ArrayList<>();
         Route shortestRoute = new Ant(maze, spec).findRoute();
-        if (DEBUG) System.out.println();
         for (int generation = 1; generation <= numberOfGenerations; generation++) {
             for (int ant = 1; ant < antsPerGeneration; ant++) {
                 if (DEBUG) System.out.print("\rGeneration: " + generation + "\tAnt: " + ant);
@@ -49,6 +48,7 @@ public class AntColonyOptimization {
             routes.clear();
             maze.evaporate(evaporationFactor); //Evaporate after every generation
         }
+        if (DEBUG) System.out.println();
         return shortestRoute;
     }
 
@@ -67,8 +67,8 @@ public class AntColonyOptimization {
         AntColonyOptimization aco = new AntColonyOptimization(maze, antsPerGeneration, numberOfGenerations, qualityFactor, evaporationFactor);
         long startTime = System.currentTimeMillis();
         Route shortestRoute = aco.findShortestRoute(spec);
-        System.out.println("Time taken: " + ((System.currentTimeMillis() - startTime) / 1000.0));
+        System.out.println("Time taken: " + ((System.currentTimeMillis() - startTime) / 1000.0) + " Seconds");
         shortestRoute.writeToFile("./data/"+mazeName+" solution.txt");
-        System.out.println(shortestRoute.size());
+        System.out.println("Shortest Route size: " + shortestRoute.size());
     }
 }
