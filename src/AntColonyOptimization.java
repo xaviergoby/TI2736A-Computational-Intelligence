@@ -35,11 +35,10 @@ public class AntColonyOptimization {
     public Route findShortestRoute(PathSpecification spec) {
         List<Route> routes = new ArrayList<>();
         Route shortestRoute = new Ant(maze, spec).findRoute();
-        
+        if (DEBUG) System.out.println();
         for (int generation = 1; generation <= numberOfGenerations; generation++) {
-        	if (DEBUG) System.out.println("Generation: " + generation);
             for (int ant = 1; ant < antsPerGeneration; ant++) {
-                if (DEBUG) System.out.println("Ant: " + ant);
+                if (DEBUG) System.out.print("\rGeneration: " + generation + "\tAnt: " + ant);
                 
         		Ant currentAnt = new Ant(maze, spec);
                 Route route = currentAnt.findRoute();
