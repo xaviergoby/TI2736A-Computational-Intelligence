@@ -79,7 +79,7 @@ public class Ant {
      * and then choose a direction.
      */
     public void move() {
-    	List<Direction> dirs = getMovableDirs();
+    	List<Direction> dirs = getMovableDirs(currentPosition);
     	
     	if (dirs.size() == 1) {
     		// If you can just move to one dir, move to that dir.
@@ -92,6 +92,16 @@ public class Ant {
     				moveTo(dirs.get(0));
     				return;
     			}
+    		}
+    		
+    		
+    		
+    		// from this moment on, the ant get choose a dir, we will prefer dirs which are close to walls
+    		// if there are directiosn which are close to walls, then choose between those.
+    		
+    		List<Direction> closeToWalls = getCloseToWalls(dirs);
+    		if (closeToWalls.size() > 0) {
+    			dirs = closeToWalls;
     		}
     		
     		List<Double> dirChances = getChances(dirs);
@@ -122,20 +132,32 @@ public class Ant {
 		return dirChances;
     }
     
-    public List<Direction> getMovableDirs() {
+    public List<Direction> getCloseToWalls(List<Direction> dirs) {
+    	List<Direction> closeToWalls = new ArrayList<>();
+    	
+    	for (Direction dir : dirs) {
+    		if (getMovableDirs(currentPosition.add(dir)).size() < 4) {
+    			closeToWalls.add(dir);
+    		}
+    	}
+    	
+    	return closeToWalls;
+    }
+    
+    public List<Direction> getMovableDirs(Coordinate pos) {
     	
     	List<Direction> dirs = new ArrayList<>();
     	
-    	if (maze.isPassable(currentPosition.add(Direction.North))) {
+    	if (maze.isPassable(pos.add(Direction.North))) {
     		dirs.add(Direction.North);
     	} 
-    	if (maze.isPassable(currentPosition.add(Direction.East))) {
+    	if (maze.isPassable(pos.add(Direction.East))) {
     		dirs.add(Direction.East);
     	}
-    	if (maze.isPassable(currentPosition.add(Direction.South))) {
+    	if (maze.isPassable(pos.add(Direction.South))) {
     		dirs.add(Direction.South);
     	} 
-    	if (maze.isPassable(currentPosition.add(Direction.West))) {
+    	if (maze.isPassable(pos.add(Direction.West))) {
     		dirs.add(Direction.West);
     	}
     	
