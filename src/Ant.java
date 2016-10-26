@@ -274,11 +274,19 @@ public class Ant {
 	 */
 	private void backtrack() {
 		visited.add(currentPosition);
-		while (getCompetingDirections(currentPosition).size() == 0) {
-			currentPosition = currentPosition.add(Direction.inverse(directionStack.peek()));
-			route.add(Direction.inverse(directionStack.pop()));
-		}
-		//System.out.println("position is now: " + currentPosition);
+			while (getCompetingDirections(currentPosition).size() == 0) {
+				currentPosition = currentPosition.add(Direction.inverse(directionStack.peek()));
+				route.add(Direction.inverse(directionStack.pop()));
+				if(directionStack.isEmpty()){
+					try {
+						System.out.println("Write failing route to file");
+						route.writeToFile("./data/failing solution.txt");
+					} catch(Exception ex) {
+						ex.printStackTrace();
+					}
+				}
+			}
+			//System.out.println("position is now: " + currentPosition);
 	}
 
 	/**
