@@ -38,15 +38,14 @@ public class AntColonyOptimization {
         for (int generation = 1; generation <= numberOfGenerations; generation++) {
             long startTime = System.currentTimeMillis();
             for (int ant = 1; ant < antsPerGeneration; ant++) {
-                if (DEBUG) System.out.print("\rGeneration: " + generation + "\tAnt: " + ant);
+                if (DEBUG) System.out.print("\rAnt: " + ant);
                 
         		Ant currentAnt = new Ant(maze, spec);
                 Route route = currentAnt.findRoute();
                 routes.add(route);
         	}
-            System.out.println("\tTime taken: " + ((System.currentTimeMillis() - startTime) / 1000.0) + " Seconds");
             for (Route route: routes) if (route.shorterThan(shortestRoute)) shortestRoute = route;
-            System.out.println("Shortest route: " + shortestRoute.size());
+            if (DEBUG) System.out.println("\rGeneration: " + generation + "\tTime taken: " + ((System.currentTimeMillis() - startTime) / 1000.0) + " Seconds\tShortest route: " + shortestRoute.size());
             maze.addPheromoneRoutes(routes, qualityFactor);
             routes.clear();
             maze.evaporate(evaporationFactor); //Evaporate after every generation
@@ -71,7 +70,7 @@ public class AntColonyOptimization {
         AntColonyOptimization aco = new AntColonyOptimization(maze, antsPerGeneration, numberOfGenerations, qualityFactor, evaporationFactor);
         long startTime = System.currentTimeMillis();
         Route shortestRoute = aco.findShortestRoute(spec);
-        System.out.println("Time taken: " + ((System.currentTimeMillis() - startTime) / 1000.0) + " Seconds");
+        System.out.println("\nTime taken: " + ((System.currentTimeMillis() - startTime) / 1000.0) + " Seconds");
         shortestRoute.writeToFile("./data/"+mazeName+" solution.txt");
         System.out.println("Shortest Route size: " + shortestRoute.size());
     }
