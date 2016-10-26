@@ -124,7 +124,7 @@ public class Maze {
      */
     public boolean isPassable(Coordinate coordinate) {
     	if (inBounds(coordinate)) {
-    		return (walls[coordinate.getX()][coordinate.getY()] == 1) && (getPheromone(coordinate) > 0);
+    		return (walls[coordinate.getX()][coordinate.getY()] == 1);
     	}
     	return false;
     }
