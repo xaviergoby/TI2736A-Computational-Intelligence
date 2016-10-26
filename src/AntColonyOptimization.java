@@ -44,7 +44,7 @@ public class AntColonyOptimization {
                 Route route = currentAnt.findRoute();
                 routes.add(route);
         	}
-            System.out.println("Time taken: " + ((System.currentTimeMillis() - startTime) / 1000.0) + " Seconds");
+            System.out.println("\tTime taken: " + ((System.currentTimeMillis() - startTime) / 1000.0) + " Seconds");
             for (Route route: routes) if (route.shorterThan(shortestRoute)) shortestRoute = route;
             System.out.println("Shortest route: " + shortestRoute.size());
             maze.addPheromoneRoutes(routes, qualityFactor);
@@ -60,12 +60,13 @@ public class AntColonyOptimization {
      * Easy solution: gen = 1000, ants = 50
      */
     public static void main(String[] args) throws FileNotFoundException {
-        String mazeName = "medium";
-        int antsPerGeneration = 100;
+        String mazeName = "insane";
+        int antsPerGeneration = 10;
         int numberOfGenerations = 100;
-        double qualityFactor = 2000;
-        double evaporationFactor = 0.1;
-        Maze maze = Maze.createMaze("./data/"+mazeName+" maze.txt");
+        double qualityFactor = 200;
+        double initialPheromoneValue = 200;
+        double evaporationFactor = 0.5;
+        Maze maze = Maze.createMaze("./data/"+mazeName+" maze.txt", initialPheromoneValue);
         PathSpecification spec = PathSpecification.readCoordinates("./data/"+mazeName+" coordinates.txt");
         AntColonyOptimization aco = new AntColonyOptimization(maze, antsPerGeneration, numberOfGenerations, qualityFactor, evaporationFactor);
         long startTime = System.currentTimeMillis();

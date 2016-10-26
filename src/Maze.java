@@ -9,8 +9,6 @@ import java.util.Scanner;
  */
 public class Maze {
 
-    private final double INITIAL_PHEROMONE_VALUE = 2000;
-
     private int width;
     private int length;
     private int[][] walls;
@@ -22,11 +20,11 @@ public class Maze {
      * @param width width of Maze (horizontal)
      * @param length length of Maze (vertical)
      */
-    public Maze(int[][] walls, int width, int length) {
+    public Maze(int[][] walls, int width, int length, double initialPheromoneValue) {
         this.walls = walls;
         this.length = length;
         this.width = width;
-        initializePheromones(INITIAL_PHEROMONE_VALUE);
+        initializePheromones(initialPheromoneValue);
     }
 
     /**
@@ -52,13 +50,6 @@ public class Maze {
             System.out.println("[Maze] Pheromone maze:");
             System.out.println(pheromonesToString());
         }
-    }
-
-    /**
-     * Reset the maze for a new shortest path problem.
-     */
-    public void reset() {
-        initializePheromones(INITIAL_PHEROMONE_VALUE);
     }
 
     /**
@@ -199,7 +190,7 @@ public class Maze {
      * @param filePath Path to the file
      * @return A maze object with pheromones initialized to 0's inaccessible and 1's accessible.
      */
-    public static Maze createMaze(String filePath) throws FileNotFoundException {
+    public static Maze createMaze(String filePath, double initialPheromoneValue) throws FileNotFoundException {
         Scanner scan = new Scanner(new FileReader(filePath));
         int width = scan.nextInt();
         int length = scan.nextInt();
@@ -210,6 +201,6 @@ public class Maze {
             }
         }
         scan.close();
-        return new Maze(mazeLayout, width, length);
+        return new Maze(mazeLayout, width, length, initialPheromoneValue);
     }
 }

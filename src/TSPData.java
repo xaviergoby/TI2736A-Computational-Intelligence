@@ -230,12 +230,13 @@ public class TSPData implements Serializable {
         int gen = 1;
         int noGen = 1;
         double Q = 1000;
+        double initialPheromoneValue = 200;
         double evap = 0.1;
         String persistFile = "./tmp/productMatrixDist";
 
         String TSPpath = "./data/tsp products.txt";
         String coordinates = "./data/hard coordinates.txt";
-        Maze maze = Maze.createMaze("./data/hard maze.txt");
+        Maze maze = Maze.createMaze("./data/hard maze.txt", initialPheromoneValue);
         TSPData pd = TSPData.readSpecification(coordinates, TSPpath);
         AntColonyOptimization aco = new AntColonyOptimization(maze, gen, noGen, Q, evap);
         pd.calculateRoutes(aco);
