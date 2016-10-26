@@ -1,7 +1,4 @@
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 /**
  * Class that represents the ants functionality.
@@ -11,10 +8,9 @@ public class Ant {
     private Coordinate start;
     private Coordinate end;
     private Coordinate currentPosition;
-    private static Random rand;   
-    private Direction currentDir;
     private Route route;
-    private List<Coordinate> memory;
+    private List<Coordinate> visited;
+	private Stack<Direction> directionStack;
 
     /**
      * Constructor for ant taking a Maze and PathSpecification.
@@ -26,15 +22,9 @@ public class Ant {
         this.start = spec.getStart();
         this.end = spec.getEnd();
         this.currentPosition = start;
-        this.currentDir = null;
         this.route = new Route(start);
-        this.memory = new ArrayList<>();
-        
-        memory.add(currentPosition);
-        
-        if (rand == null) {
-            rand = new Random();
-        }
+        this.visited = new ArrayList<>();
+		this.directionStack = new Stack<>();
     }
 
     /**
@@ -42,14 +32,8 @@ public class Ant {
      * @return The route the ant found through the maze.
      */
     public Route findRoute() {
-    	if (route.size() > 0) {
-    		return route;
-    	}
-    	
-        while (!(currentPosition.equals(end))) {
-        	move();
-        }
-        
+    	if (route.size() > 0) return route;
+        while (!currentPosition.equals(end)) move();
         return route;
     }
     
@@ -65,7 +49,6 @@ public class Ant {
      */
     public void setCoordinates(Coordinate currentPosition) {
     	this.currentPosition = currentPosition;
-    	this.currentDir = null;
     }
     
     /**
@@ -74,9 +57,8 @@ public class Ant {
     public void moveTo(Direction dir) {
 //    	System.out.println("Moved to : " + dir);
     	route.add(dir);
-    	currentDir = dir;
     	currentPosition = currentPosition.add(dir);
-    	memory.add(currentPosition);
+    	visited.add(currentPosition);
     }
     
     /**
@@ -86,50 +68,137 @@ public class Ant {
      * and then choose a direction.
      */
     public void move() {
-    	List<Direction> dirs = getMovableDirs(currentPosition);
-    	
-    	if (dirs.size() == 1) {
-    		// If you can just move to one dir, move to that dir.
-    		moveTo(dirs.get(0));
-    		
-    	} else {
-    		if (currentDir != null) {
-    			dirs.remove(Direction.inverse(currentDir));
-    			if (dirs.size() == 1) {
-    				moveTo(dirs.get(0));
-    				return;
-    			}
-    		}
-    		
-    		// checks if the ant hasnt been to that coordinate
-    		
-    		List<Direction> unvisited = getUnvisitedDirs(dirs);
-    		if (unvisited.size() > 0) {
-    			dirs = unvisited;
-    		}
-    		
-    		
-    		// from this moment on, the ant gets to choose a dir, we will prefer dirs which are close to walls
-    		// if there are directions which are close to walls, then choose between those.
-    		
-    		List<Direction> closeToWalls = getCloseToWalls(dirs);
-    		if (closeToWalls.size() > 0) {
-    			dirs = closeToWalls;
-    		}
-    		
-    		List<Double> dirChances = getChances(dirs);
-    		
-    		double decision = new Random().nextDouble();
-    		
-    		for (int i = 0; i < dirChances.size(); i++) {
-    			if (decision <= dirChances.get(i)) {
-    				moveTo(dirs.get(i));
-    				break;
-    			}
-    		}
-    	}
+    	EnumMap<Direction, Double> directions = getCompetingDirections(currentPosition);
+		//System.out.println();
+		//System.out.println("The amount of competing directions is: " + directions.size());
+
+		// Backtrack the dead ends.
+		if (directions.size() == 0) {
+			System.out.println("Backtracking...");
+			backtrack();
+			return;
+		}
+
+		Direction chosenDirection = null;
+		double randomNumber = new Random().nextDouble();
+		//System.out.println("The random number is: " + randomNumber);
+		double total = 0.0d;
+		SurroundingPheromone surroundingPheromone = maze.getSurroundingPheromone(currentPosition);
+		double totalSurroundingPheromone = 0.0d;
+		for (Direction direction : directions.keySet()) {
+			totalSurroundingPheromone += surroundingPheromone.get(direction);
+		}
+
+		//System.out.println("totalSurroundingPheromone: " + totalSurroundingPheromone);
+
+		// Roulette wheel selection
+		for (Direction direction : directions.keySet()) {
+			total += (surroundingPheromone.get(direction) / totalSurroundingPheromone);
+			//System.out.println("Pheromone for direction " + direction + " = " + surroundingPheromone.get(direction));
+			//System.out.println("Total for direction: " + direction.toString() + " = " + total);
+			if (total >= randomNumber) {
+				//System.out.println("chosenDirection: " + direction.toString());
+				chosenDirection = direction;
+				break;
+			}
+		}
+		System.out.println();
+		System.out.println("The current position is: " + currentPosition.toString());
+		System.out.println("The chosen direction is: " + chosenDirection.toString());
+
+		// Moving to the next tile...
+		route.add(chosenDirection);
+		directionStack.push(chosenDirection);
+		visited.add(currentPosition); // Must happen before changing currentPosition!
+		currentPosition = currentPosition.add(chosenDirection);
+
+//    	if (dirs.size() == 1) {
+//    		// If you can just move to one dir, move to that dir.
+//    		moveTo(dirs.get(0));
+//
+//    	} else {
+//    		if (currentDirection != null) {
+//    			dirs.remove(Direction.inverse(currentDirection));
+//    			if (dirs.size() == 1) {
+//    				moveTo(dirs.get(0));
+//    				return;
+//    			}
+//    		}
+//
+//    		// checks if the ant hasnt been to that coordinate
+//
+//    		List<Direction> unvisited = getUnvisitedDirs(dirs);
+//    		if (unvisited.size() > 0) {
+//    			dirs = unvisited;
+//    		}
+//
+//
+//    		// from this moment on, the ant gets to choose a dir, we will prefer dirs which are close to walls
+//    		// if there are directions which are close to walls, then choose between those.
+//
+//    		List<Direction> closeToWalls = getCloseToWalls(dirs);
+//    		if (closeToWalls.size() > 0) {
+//    			dirs = closeToWalls;
+//    		}
+//
+//			moveTo(decide(getCompetingDirections(currentPosition)));
+//
+//    		List<Double> dirChances = getChances(dirs);
+//
+//    		double decision = new Random().nextDouble();
+//			moveTo(dirs.get(decision));
+//
+//    		for (int i = 0; i < dirChances.size(); i++) {
+//    			if (decision <= dirChances.get(i)) {
+//    				moveTo(dirs.get(i));
+//    				break;
+//    			}
+//    		}
+//			//System.out.println(currentPosition.toString());
+//    	}
     }
-    
+
+	/**
+	 * Decide between Directions with a Roulette Wheel Selection, given their pheromone value.
+	 * @param directions HashMap of Directions and their pheromone value.
+	 * @return The chosen Direction.
+	 */
+	public Direction decide(HashMap<Direction, Double> directions) {
+
+		Iterator<Map.Entry<Direction, Double>> iterator = directions.entrySet().iterator();
+		while (iterator.hasNext()) {
+			Map.Entry<Direction, Double> entry = iterator.next();
+			if(isVisited(entry.getKey())){
+				iterator.remove();
+			}
+		}
+
+		// Remove Directions previously visited.
+		List<Direction> toRemove = new ArrayList<>();
+		for (HashMap.Entry<Direction, Double> entry : directions.entrySet()) {
+			if (isVisited(entry.getKey())) toRemove.add(entry.getKey());
+		}
+
+		// Change Pheromone value to chance.
+		for (HashMap.Entry<Direction, Double> entry : directions.entrySet()) {
+			directions.put(entry.getKey(), entry.getValue() / maze.getSurroundingPheromone(currentPosition).getTotalSurroundingPheromone());
+		}
+
+		double randomNumber = new Random().nextDouble();
+		double total = 0.0d;
+
+		// Decide the Direction.
+		for (HashMap.Entry<Direction, Double> entry : directions.entrySet()) {
+			total += entry.getValue();
+			if (total >= randomNumber)
+				return entry.getKey();
+		}
+
+		// Shouldn't be reachable.
+		System.err.println("The decide() couldn't decide...");
+		return null;
+	}
+
     public List<Double> getChances(List<Direction> dirs) {
     	List<Double> dirChances = new ArrayList<Double>();
 		
@@ -144,9 +213,18 @@ public class Ant {
 		Collections.sort(dirChances);
 		return dirChances;
     }
-    
+
+    public boolean isVisited(Direction direction) {
+		for (Coordinate coordinate : visited) {
+			if (currentPosition.add(direction).equals(coordinate)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
     /**
-     * Searches the memory for already visited Directions.
+     * Searches the visited for already visited Directions.
      * Greedy algorithm!
      * @param dirs The Directions to search in.
      * @return List<Direction> The unvisited Directions.
@@ -154,7 +232,7 @@ public class Ant {
     public List<Direction> getUnvisitedDirs(List<Direction> dirs) {
     	List<Direction> unvisited = new ArrayList<>();
     	for (Direction dir : dirs) {
-    		for (Coordinate co : memory) {
+    		for (Coordinate co : visited) {
     			if (currentPosition.add(dir).equals(co)) {
     				break;
     			}
@@ -173,32 +251,49 @@ public class Ant {
     	List<Direction> closeToWalls = new ArrayList<>();
     	
     	for (Direction dir : dirs) {
-    		if (getMovableDirs(currentPosition.add(dir)).size() < 4) {
+    		if (getCompetingDirections(currentPosition.add(dir)).size() < 4) {
     			closeToWalls.add(dir);
     		}
     	}
     	
     	return closeToWalls;
     }
-    
-    public List<Direction> getMovableDirs(Coordinate pos) {
+
+	/**
+	 * Backtrack to the previous junction, so that we can choose a different direction.
+	 * This works for any number of junctions deep.
+	 */
+	private void backtrack() {
+		visited.add(currentPosition);
+		while (getCompetingDirections(currentPosition).size() == 0) {
+			currentPosition = currentPosition.add(Direction.inverse(directionStack.peek()));
+			route.add(Direction.inverse(directionStack.pop()));
+		}
+		//System.out.println("position is now: " + currentPosition);
+	}
+
+	/**
+	 * Returns an EnumMap<Direction, Double> containing all competing directions and their pheromone value.
+	 * Competing directions are not on walls, and not already visited.
+	 * @param position The position you are currently on.
+	 * @return An EnumMap<Direction, Double> containing all competing directions and their pheromone value.
+	 */
+	private EnumMap<Direction, Double> getCompetingDirections(Coordinate position) {
+		EnumMap<Direction, Double> directions = new EnumMap<>(Direction.class);
     	
-    	List<Direction> dirs = new ArrayList<>();
+    	if (maze.isPassable(position.add(Direction.North)) && !visited.contains(position.add(Direction.North)))
+			directions.put(Direction.North, maze.getPheromone(position.add(Direction.North)));
+
+    	if (maze.isPassable(position.add(Direction.East)) && !visited.contains(position.add(Direction.East)))
+			directions.put(Direction.East, maze.getPheromone(position.add(Direction.East)));
+
+    	if (maze.isPassable(position.add(Direction.South)) && !visited.contains(position.add(Direction.South)))
+			directions.put(Direction.South, maze.getPheromone(position.add(Direction.South)));
+
+    	if (maze.isPassable(position.add(Direction.West)) && !visited.contains(position.add(Direction.West)))
+			directions.put(Direction.West, maze.getPheromone(position.add(Direction.West)));
     	
-    	if (maze.isPassable(pos.add(Direction.North))) {
-    		dirs.add(Direction.North);
-    	} 
-    	if (maze.isPassable(pos.add(Direction.East))) {
-    		dirs.add(Direction.East);
-    	}
-    	if (maze.isPassable(pos.add(Direction.South))) {
-    		dirs.add(Direction.South);
-    	} 
-    	if (maze.isPassable(pos.add(Direction.West))) {
-    		dirs.add(Direction.West);
-    	}
-    	
-    	return dirs;
+    	return directions;
     }
 }
 

@@ -148,7 +148,7 @@ public class Maze {
      * @param pos Position coordinate
      * @return pheromone at point
      */
-    private double getPheromone(Coordinate pos) {
+    public double getPheromone(Coordinate pos) {
     	if (inBounds(pos)) {
     		return pheromones[pos.getX()][pos.getY()];
     	} else {
