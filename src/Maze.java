@@ -44,22 +44,22 @@ public class Maze {
                 if (walls[i][j] == 1) {
                     // Only initialize pheromones if an adjacent tile is a wall.
                     // Done to prevent moving over courtyards.
-                    if (
-                            i == 0 ||
-                            i == pheromones.length -1 ||
-                            j == 0 ||
-                            j == pheromones[i].length -1 ||
-                            walls[i-1][j-1] == 0 ||
-                            walls[i-1][j] == 0 ||
-                            walls[i-1][j+1] == 0 ||
-                            walls[i][j-1] == 0 ||
-                            walls[i][j+1] == 0 ||
-                            walls[i+1][j-1] == 0 ||
-                            walls[i+1][j] == 0 ||
-                            walls[i+1][j+1] == 0
-                    ) {
+//                    if (
+//                            i == 0 ||
+//                            i == pheromones.length -1 ||
+//                            j == 0 ||
+//                            j == pheromones[i].length -1 ||
+//                            walls[i-1][j-1] == 0 ||
+//                            walls[i-1][j] == 0 ||
+//                            walls[i-1][j+1] == 0 ||
+//                            walls[i][j-1] == 0 ||
+//                            walls[i][j+1] == 0 ||
+//                            walls[i+1][j-1] == 0 ||
+//                            walls[i+1][j] == 0 ||
+//                            walls[i+1][j+1] == 0
+//                    ) {
                         pheromones[i][j] = pheromoneValue;
-                    }
+//                    }
                 }
             }
         }
