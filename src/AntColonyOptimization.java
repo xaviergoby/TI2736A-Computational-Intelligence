@@ -61,11 +61,11 @@ public class AntColonyOptimization {
      */
     public static void main(String[] args) throws FileNotFoundException {
         String mazeName = "insane";
-        int antsPerGeneration = 10;
+        int antsPerGeneration = 25;
         int numberOfGenerations = 100;
-        double qualityFactor = 200;
-        double initialPheromoneValue = 200;
-        double evaporationFactor = 0.5;
+        double qualityFactor = 1000;
+        double initialPheromoneValue = 1000;
+        double evaporationFactor = 0.1;
         Maze maze = Maze.createMaze("./data/"+mazeName+" maze.txt", initialPheromoneValue);
         PathSpecification spec = PathSpecification.readCoordinates("./data/"+mazeName+" coordinates.txt");
         AntColonyOptimization aco = new AntColonyOptimization(maze, antsPerGeneration, numberOfGenerations, qualityFactor, evaporationFactor);

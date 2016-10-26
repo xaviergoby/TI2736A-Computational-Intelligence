@@ -29,7 +29,7 @@ public class TSPData implements Serializable {
     /**
      * Calculate the routes from the product locations to each other, the start, and the end.
      * Additionally generate arrays that contain the length of all the routes.
-     * @param maze
+     * @param aco
      */
     public void calculateRoutes(AntColonyOptimization aco) {
         productToProduct = buildDistanceMatrix(aco);
@@ -146,7 +146,7 @@ public class TSPData implements Serializable {
 
     /**
      * Calculate the optimal routes between all the individual routes
-     * @param maze Maze to calculate optimal routes in
+     * @param aco Maze to calculate optimal routes in
      * @return Optimal routes between all products in 2d array
      */
     private Route[][] buildDistanceMatrix(AntColonyOptimization aco) {
@@ -164,7 +164,7 @@ public class TSPData implements Serializable {
 
     /**
      * Calculate optimal route between the start and all the products
-     * @param maze Maze to calculate optimal routes in
+     * @param aco Maze to calculate optimal routes in
      * @return Optimal route from start to products
      */
     private Route[] buildStartToProducts(AntColonyOptimization aco) {
@@ -178,7 +178,7 @@ public class TSPData implements Serializable {
 
     /**
      * Calculate optimal routes between the products and the end point
-     * @param maze Maze to calculate optimal routes in
+     * @param aco Maze to calculate optimal routes in
      * @return Optimal route from products to end
      */
     private Route[] buildProductsToEnd(AntColonyOptimization aco) {
@@ -227,18 +227,18 @@ public class TSPData implements Serializable {
      * Assignment 2.a
      */
     public static void main(String[] args) throws IOException, ClassNotFoundException {
-        int gen = 1;
-        int noGen = 1;
-        double Q = 1000;
-        double initialPheromoneValue = 200;
-        double evap = 0.1;
+        int antsPerGeneration = 25;
+        int numberOfGenerations = 100;
+        double qualityFactor = 1000;
+        double initialPheromoneValue = 1000;
+        double evaporationFactor = 0.1;
         String persistFile = "./tmp/productMatrixDist";
 
         String TSPpath = "./data/tsp products.txt";
         String coordinates = "./data/hard coordinates.txt";
         Maze maze = Maze.createMaze("./data/hard maze.txt", initialPheromoneValue);
         TSPData pd = TSPData.readSpecification(coordinates, TSPpath);
-        AntColonyOptimization aco = new AntColonyOptimization(maze, gen, noGen, Q, evap);
+        AntColonyOptimization aco = new AntColonyOptimization(maze, antsPerGeneration, numberOfGenerations, qualityFactor, evaporationFactor);
         pd.calculateRoutes(aco);
         pd.writeToFile(persistFile);
         TSPData pd2 = TSPData.readFromFile(persistFile);
