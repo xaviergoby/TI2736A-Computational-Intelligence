@@ -102,6 +102,15 @@ public class Ant {
 				break;
 			}
 		}
+		if(chosenDirection == null){
+			try{
+				route.writeToFile("./data/failing solution.txt");
+			} catch(Exception e) {
+				e.printStackTrace();
+			}
+
+			System.out.println("Chosen direction was null! See failing solution for the route");
+		}
 		System.out.println();
 		System.out.println("The current position is: " + currentPosition.toString());
 		System.out.println("The chosen direction is: " + chosenDirection.toString());
