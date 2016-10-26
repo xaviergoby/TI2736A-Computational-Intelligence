@@ -84,7 +84,7 @@ public class Ant {
 	private void backtrack() {
 		visited.add(currentPosition);
 		while (getCompetingDirections(currentPosition).size() == 0) {
-			currentPosition = currentPosition.add(Direction.inverse(directionStack.peek()));
+			currentPosition = currentPosition.subtract(directionStack.peek());
 			route.add(Direction.inverse(directionStack.pop()));
 		}
 	}
