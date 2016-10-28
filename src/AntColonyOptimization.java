@@ -39,9 +39,7 @@ public class AntColonyOptimization {
             long startTime = System.currentTimeMillis();
             for (int ant = 1; ant <= antsPerGeneration; ant++) {
                 if (DEBUG) System.out.print("\rAnt: " + ant);
-        		Ant currentAnt = new Ant(maze, spec);
-                Route route = currentAnt.findRoute();
-                routes.add(route);
+                routes.add(new Ant(maze, spec).findRoute());
         	}
         	int averageRouteSize = 0;
             for (Route route : routes) {
@@ -50,7 +48,7 @@ public class AntColonyOptimization {
             }
             if (DEBUG) System.out.println(
                             "\rGeneration: " + generation +
-                            "\tTime taken: " + ((System.currentTimeMillis() - startTime) / 1000.0) + " Seconds" +
+                            "\tTime taken: " + ((System.currentTimeMillis() - startTime) / 1000.0) + "s" +
                             "\tAverage route: " + averageRouteSize +
                             "\tShortest route: " + shortestRoute.size());
             maze.addPheromoneRoutes(routes, qualityFactor);
