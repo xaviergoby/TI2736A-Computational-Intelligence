@@ -51,7 +51,8 @@ public class GeneticAlgorithm {
     public List<Chromosome> createNextGeneration(List<Chromosome> currentPopulation) {
     	List<Chromosome> nextGeneration = new ArrayList<>(popSize);
     	
-    	while (nextGeneration.size() < 20) {
+    	int n = 0;
+    	while (n < popSize) {
     		// make parents
     		Chromosome father = getRouletteChromosome(currentPopulation);
     		Chromosome mother = getRouletteChromosome(currentPopulation);
@@ -78,7 +79,7 @@ public class GeneticAlgorithm {
     		}
     		
     		nextGeneration.add(child);
-    		
+    		n += 1;
     	}
     	
     	return nextGeneration;
@@ -150,7 +151,7 @@ public class GeneticAlgorithm {
      * @return Chromosome The fittest chromosome.
      */
     public Chromosome getFittestCandidate(Chromosome father, Chromosome mother) {
-    	return (father.getFitness() <= mother.getFitness()) ? father : mother;
+    	return (father.getFitness() >= mother.getFitness()) ? father : mother;
     }
     
     /**
@@ -194,10 +195,10 @@ public class GeneticAlgorithm {
      * @param tsp The TSPData to search in.
      * @return int The total distance.
      */
-    public int getTotalDistance(Chromosome order, TSPData tsp) {
-    	int total = tsp.getStartDistances()[order.getChromosome()[0]];
+    public double getTotalDistance(Chromosome order, TSPData tsp) {
+    	double total = tsp.getStartDistances()[order.getChromosome()[0]];
     	for (int i = 0; i < order.getChromosome().length-1; i++) {
-    		total += tsp.getDistances()[i][i+1];
+    		total += (double) tsp.getDistances()[i][i+1];
     	}
     	total += tsp.getEndDistances()[order.getChromosome().length-1];
     	return total;
