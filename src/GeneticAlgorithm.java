@@ -9,40 +9,6 @@ import java.util.Random;
  * TSP problem solver using genetic algorithms
  */
 public class GeneticAlgorithm {
-	
-	public class Chromosome {
-		private int[] chromosome;
-		private double fitness;
-		
-		public Chromosome(int[] chromosome) {
-			this.chromosome = chromosome;
-			this.fitness = 0;
-		}
-		
-		/**
-	     * Knuth-Yates shuffle, reordering a array randomly
-	     * @param chromosome array to shuffle.
-	     */
-	    private void shuffle() {
-	        int n = chromosome.length;
-	        for (int i = 0; i < n; i++) {
-	            int r = i + (int) (Math.random() * (n - i));
-	            int swap = chromosome[r];
-	            chromosome[r] = chromosome[i];
-	            chromosome[i] = swap;
-	        }
-	    }
-		
-		public int[] getChromosome() { return chromosome; }
-		public double getFitness() { return fitness; }
-		public void setFitness(double newFitness) { fitness = newFitness; }
-		
-		public boolean equals(Object other) {
-			if (!(other instanceof Chromosome)) return false;
-			Chromosome castChromosome = (Chromosome) other;
-			return (Arrays.equals(chromosome, castChromosome.chromosome)) && fitness == castChromosome.fitness;
-		}
-	}
 
     private int generations;
     private int popSize;
@@ -58,16 +24,30 @@ public class GeneticAlgorithm {
         this.randomizer = new Random();
     }
 
+    /**
+     * Solves the TSP using a genetic algorithm.
+     * @param pd The TSPData.
+     * @return int[] The order of items.
+     */
     public int[] solveTSP(TSPData pd) {
-    	List<Chromosome> initialPopulation = new ArrayList<>();
-    	initializePopulation(initialPopulation);
+    	List<Chromosome> population = new ArrayList<>();
+    	initializePopulation(population);
     	
-    	calculateFitness(initialPopulation, pd);
-    	   	
+    	int n = 0;
+    	while (n < generations) {
+    		calculateFitness(population, pd);
+    		population = createNextGeneration(population);
+    		n += 1;
+    	}
     	
-        return new int[]{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 16, 17};
+        return getBestChromosome(population).getChromosome();
     }
     
+    /**
+     * Creates the next generation.
+     * @param currentPopulation The current geneation.
+     * @return List<Chromosome> The next generation.
+     */
     public List<Chromosome> createNextGeneration(List<Chromosome> currentPopulation) {
     	List<Chromosome> nextGeneration = new ArrayList<>(popSize);
     	
@@ -81,6 +61,7 @@ public class GeneticAlgorithm {
     		double crossOver = randomizer.nextDouble();
     		double mutation = randomizer.nextDouble();
     		
+    		// clone the best chromosome in case no offspring can be generated
     		Chromosome child = getFittestCandidate(father,mother);
     		
     		if (crossOver <= crossOverChance) {
@@ -90,7 +71,7 @@ public class GeneticAlgorithm {
     		
     		if (mutation <= mutationChance) {
     			// apply mutation
-    			
+    			child.mutate(randomizer);
     		}
     		
     		nextGeneration.add(child);
@@ -100,8 +81,29 @@ public class GeneticAlgorithm {
     	return nextGeneration;
     }
     
+    /**
+     * Returns the best chromosome in a list.
+     * @param gen The generation with Chromosomes.
+     * @return Çhromosome The best Chromosome.
+     */
+    public Chromosome getBestChromosome(List<Chromosome> gen) {
+    	Chromosome best = gen.get(0);
+    	for (Chromosome chromosome : gen) {
+    		if (chromosome.getFitness() >= best.getFitness()) {
+    			best = chromosome;
+    		}
+    	}
+    	return best;
+    }
+    
+    /**
+     * Creates a single-point crossover.
+     * @param father The father Chromosome.
+     * @param mother The mother Chromosome.
+     * @return Chromosome The child Chromosome.
+     */
     public Chromosome createCrossOver(Chromosome father, Chromosome mother) {
-    	int crossOverPoint = randomizer.nextInt(father.chromosome.length);
+    	int crossOverPoint = randomizer.nextInt(father.getChromosome().length);
     	int[] childChromosome = new int[18];
     	
     	// copy values from father starting from crossoverpoint
@@ -120,11 +122,15 @@ public class GeneticAlgorithm {
     			}
     		}
     	}
-    	
     	return new Chromosome(childChromosome);
-    	
     }
     
+    /**
+     * Checks if a int[] has a gen.
+     * @param chromosome int[] list.
+     * @param gen Gen to check for.
+     * @return boolean True if it contains the gen.
+     */
     public boolean hasGen(int[] chromosome, int gen) {
 		for (int i = 0; i < chromosome.length; i++) {
 			if (chromosome[i] == gen) {
@@ -134,10 +140,21 @@ public class GeneticAlgorithm {
 		return false;
 	}
     
+    /**
+     * Get fittest Candidate out of 2 Chromosomes.
+     * @param father Father Chromosome.
+     * @param mother Mother Chromosome.
+     * @return Chromosome The fittest chromosome.
+     */
     public Chromosome getFittestCandidate(Chromosome father, Chromosome mother) {
     	return (father.getFitness() <= mother.getFitness()) ? father : mother;
     }
     
+    /**
+     * Select chromosome based on its fitness using a roulette wheel.
+     * @param currentPopulation The current population.
+     * @return Chromosome The selected Chromosome.
+     */
     public Chromosome getRouletteChromosome(List<Chromosome> currentPopulation) {
     	double totalChance = 0;
     	Chromosome parent = new Chromosome(new int[0]);
@@ -152,6 +169,11 @@ public class GeneticAlgorithm {
     	return parent;
     }
     
+    /**
+     * Calculates the fitness of each chromosome.
+     * @param pop List of Chromosomes.
+     * @param tsp The TSPData.
+     */
     public void calculateFitness(List<Chromosome> pop, TSPData tsp) {
     	int fitnessSum = 0;
     	for (Chromosome chromosome : pop) {
@@ -163,6 +185,12 @@ public class GeneticAlgorithm {
     	}
     }
     
+    /**
+     * Get total distance of a chromosome.
+     * @param order The chromosome.
+     * @param tsp The TSPData to search in.
+     * @return int The total distance.
+     */
     public int getTotalDistance(Chromosome order, TSPData tsp) {
     	int total = tsp.getStartDistances()[order.getChromosome()[0]];
     	for (int i = 0; i < order.getChromosome().length-1; i++) {
@@ -172,6 +200,10 @@ public class GeneticAlgorithm {
     	return total;
     }
     
+    /**
+     * Initialize random population.
+     * @param initialPop List<Chromosome> Empty gen.
+     */
     public void initializePopulation(List<Chromosome> initialPop) {
     	Collections.fill(initialPop, new Chromosome(new int[]{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 16, 17}));
     	for (Chromosome chromosome : initialPop) {
