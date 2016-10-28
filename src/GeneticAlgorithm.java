@@ -36,7 +36,33 @@ public class GeneticAlgorithm {
     	List<int[]> initialPopulation = new ArrayList<>();
     	initializePopulation(initialPopulation);
     	
+    	
+    	
         return new int[]{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 16, 17};
+    }
+    
+    public List<Double> calculateFitness(List<int[]> pop, TSPData tsp) {
+    	List<Double> fitness = new ArrayList<>();
+    	
+    	int fitnessSum = 0;
+    	for (int[] chromosome : pop) {
+    		fitnessSum += getTotalDistance(chromosome, tsp);
+    	}
+    	
+    	for (int[] chromosome : pop) {
+    		fitness.add(1.0d - (getTotalDistance(chromosome,tsp) / fitnessSum));
+    	}
+    	
+    	return fitness;
+    }
+    
+    public int getTotalDistance(int[] order, TSPData tsp) {
+    	int total = tsp.getStartDistances()[order[0]];
+    	for (int i = 0; i < order.length-1; i++) {
+    		total += tsp.getDistances()[i][i+1];
+    	}
+    	total += tsp.getEndDistances()[order.length-1];
+    	return total;
     }
     
     public void initializePopulation(List<int[]> initialPop) {
