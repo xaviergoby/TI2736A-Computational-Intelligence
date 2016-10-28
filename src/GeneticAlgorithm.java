@@ -30,7 +30,7 @@ public class GeneticAlgorithm {
      * @return int[] The order of items.
      */
     public int[] solveTSP(TSPData pd) {
-    	List<Chromosome> population = new ArrayList<>();
+    	List<Chromosome> population = new ArrayList<>(20);
     	initializePopulation(population);
     	
     	int n = 0;
@@ -49,10 +49,9 @@ public class GeneticAlgorithm {
      * @return List<Chromosome> The next generation.
      */
     public List<Chromosome> createNextGeneration(List<Chromosome> currentPopulation) {
-    	List<Chromosome> nextGeneration = new ArrayList<>(popSize);
+    	List<Chromosome> nextGeneration = new ArrayList<>();
     	
-    	int n = 0;
-    	while (n < popSize) {
+    	while (nextGeneration.size() < popSize) {
     		// make parents
     		Chromosome father = getRouletteChromosome(currentPopulation);
     		Chromosome mother = getRouletteChromosome(currentPopulation);
@@ -79,7 +78,6 @@ public class GeneticAlgorithm {
     		}
     		
     		nextGeneration.add(child);
-    		n += 1;
     	}
     	
     	return nextGeneration;
