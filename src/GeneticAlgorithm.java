@@ -52,16 +52,19 @@ public class GeneticAlgorithm {
     	List<Chromosome> nextGeneration = new ArrayList<>(popSize);
     	
     	while (nextGeneration.size() < 20) {
-    		// make children
+    		// make parents
     		Chromosome father = getRouletteChromosome(currentPopulation);
-    		
-    		// should check whether mother != father
     		Chromosome mother = getRouletteChromosome(currentPopulation);
+    		
+    		// make sure mother and father are not the same
+    		while (father.equals(mother)) {
+    			mother = getRouletteChromosome(currentPopulation);
+    		}
     		
     		double crossOver = randomizer.nextDouble();
     		double mutation = randomizer.nextDouble();
     		
-    		// clone the best chromosome in case no offspring can be generated
+    		// clone the best parent in case no offspring can be generated
     		Chromosome child = getFittestCandidate(father,mother);
     		
     		if (crossOver <= crossOverChance) {
