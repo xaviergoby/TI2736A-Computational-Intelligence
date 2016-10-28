@@ -1,5 +1,7 @@
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * TSP problem solver using genetic algorithms
@@ -31,7 +33,17 @@ public class GeneticAlgorithm {
     }
 
     public int[] solveTSP(TSPData pd) {
+    	List<int[]> initialPopulation = new ArrayList<>();
+    	initializePopulation(initialPopulation);
+    	
         return new int[]{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 16, 17};
+    }
+    
+    public void initializePopulation(List<int[]> initialPop) {
+    	Collections.fill(initialPop, new int[]{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 16, 17});
+    	for (int[] parent : initialPop) {
+    		shuffle(parent);
+    	}
     }
 
     /**
