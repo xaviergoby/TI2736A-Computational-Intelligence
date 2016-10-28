@@ -41,16 +41,19 @@ public class AntColonyOptimization {
                 if (DEBUG) System.out.print("\rAnt: " + ant);
                 routes.add(new Ant(maze, spec).findRoute());
         	}
+        	int shortestRouteThisGeneration = Integer.MAX_VALUE;
         	int averageRouteSize = 0;
             for (Route route : routes) {
                 averageRouteSize += (route.size() / routes.size());
+                if (route.size() < shortestRouteThisGeneration) shortestRouteThisGeneration = route.size();
                 if (route.shorterThan(shortestRoute)) shortestRoute = route;
             }
             if (DEBUG) System.out.println(
                             "\rGeneration: " + generation +
                             "\tTime taken: " + ((System.currentTimeMillis() - startTime) / 1000.0) + "s" +
-                            "\tAverage route: " + averageRouteSize +
-                            "\tShortest route: " + shortestRoute.size());
+                            "\t\tAverage route: " + averageRouteSize +
+                            "\tShortest route: " + shortestRouteThisGeneration +
+                            "\t\tTotal Shortest route: " + shortestRoute.size());
             maze.addPheromoneRoutes(routes, qualityFactor);
             routes.clear();
             maze.evaporate(evaporationFactor); //Evaporate after every generation
