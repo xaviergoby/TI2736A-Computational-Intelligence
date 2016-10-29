@@ -12,7 +12,7 @@ public class AntColonyOptimization {
     private double qualityFactor;
     private double evaporationFactor;
     private Maze maze;
-    public static boolean DEBUG = false;
+    public static boolean DEBUG = true;
  
     public AntColonyOptimization(Maze maze, int antsPerGeneration, int numberOfGenerations, double qualityFactor, double evaporationFactor) {
         this.maze = maze;
