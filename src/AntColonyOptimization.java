@@ -51,9 +51,9 @@ public class AntColonyOptimization {
             if (DEBUG) System.out.println(
                             "\rGeneration: " + generation +
                             "\tTime taken: " + ((System.currentTimeMillis() - startTime) / 1000.0) + "s" +
-                            "\t\tAverage route: " + averageRouteSize +
-                            "\tShortest route: " + shortestRouteThisGeneration +
-                            "\t\tTotal Shortest route: " + shortestRoute.size());
+                            "\t\tAverage: " + averageRouteSize +
+                            "\tShortest: " + shortestRouteThisGeneration +
+                            "\t\tTotal Shortest: " + shortestRoute.size());
             maze.addPheromoneRoutes(routes, qualityFactor);
             routes.clear();
             maze.evaporate(evaporationFactor); //Evaporate after every generation
