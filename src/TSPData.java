@@ -152,13 +152,16 @@ public class TSPData implements Serializable {
     private Route[][] buildDistanceMatrix(AntColonyOptimization aco) {
         int numberOfProduct = productLocations.size();
         Route[][] productToProduct = new Route[numberOfProduct][numberOfProduct];
+        System.out.println("Building Distance Matrix...");
         for (int i = 0; i < numberOfProduct; i++) {
             for (int j = 0; j < numberOfProduct; j++) {
                 Coordinate start = productLocations.get(i);
                 Coordinate end = productLocations.get(j);
                 productToProduct[i][j] = aco.findShortestRoute(new PathSpecification(start, end));
+                System.out.print(String.format("\r%.2f", (i*numberOfProduct+j) * 100 / Math.pow(numberOfProduct, 2)) + "%");
             }
         }
+        System.out.println("\nMatrix Built!");
         return productToProduct;
     }
 
