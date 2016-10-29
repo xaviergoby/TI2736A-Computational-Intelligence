@@ -139,6 +139,7 @@ public class GeneticAlgorithm {
     	}
     	
     	int[] firstChildChromosome = new int[father.getChromosome().length];
+    	Arrays.fill(firstChildChromosome, -1);
     	
     	int start = firstPoint <  secondPoint ? firstPoint : secondPoint;
     	int end = firstPoint > secondPoint ? firstPoint : secondPoint;
@@ -264,7 +265,8 @@ public class GeneticAlgorithm {
         TSPData tspData = TSPData.readFromFile(persistFile);
 
         GeneticAlgorithm ga = new GeneticAlgorithm(generations, populationSize, crossOverChance, mutationChance);
-
+        Chromosome a = new Chromosome(new int[]{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17});
+        Chromosome b = new Chromosome(new int[]{1, 2, 0, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17});
         int[] solution = ga.solveTSP(tspData);
         
         for (int i : solution) {
