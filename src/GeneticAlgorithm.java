@@ -30,17 +30,40 @@ public class GeneticAlgorithm {
      * @return int[] The order of items.
      */
     public int[] solveTSP(TSPData pd) {
-    	List<Chromosome> population = new ArrayList<>(20);
+    	List<Chromosome> population = new ArrayList<>();
     	initializePopulation(population);
+    	
+    	System.out.println("Initial population size: " + population.size());
     	
     	int n = 0;
     	while (n < generations) {
+    		System.out.println("Generation " + n);
+    		System.out.println("----------------");
     		calculateFitness(population, pd);
+    		System.out.println("Average generation fitness: " + getAverageFitness(population));
+    		System.out.println("Generating generation " + (n+1) + "...");
     		population = createNextGeneration(population);
+    		System.out.println("Done");
+    		System.out.println("--------------------------------------");
     		n += 1;
     	}
     	
-        return getBestChromosome(population).getChromosome();
+    	calculateFitness(population, pd);
+    	System.out.println("Average generation fitness: " + getAverageFitness(population));
+    	System.out.println("Get fittest candidate off last generation...");
+    	Chromosome bestCandidate = getBestChromosome(population);
+    	
+    	System.out.println("Final fitness: " + bestCandidate.getFitness());
+    	
+        return bestCandidate.getChromosome();
+    }
+    
+    public double getAverageFitness(List<Chromosome> pop) {
+    	double average = 0.0d;
+    	for (Chromosome c : pop) {
+    		average += c.getFitness();
+    	}
+    	return average / (double) pop.size();
     }
     
     /**
@@ -52,6 +75,7 @@ public class GeneticAlgorithm {
     	List<Chromosome> nextGeneration = new ArrayList<>();
     	
     	while (nextGeneration.size() < popSize) {
+    		
     		// make parents
     		Chromosome father = getRouletteChromosome(currentPopulation);
     		Chromosome mother = getRouletteChromosome(currentPopulation);
@@ -106,7 +130,7 @@ public class GeneticAlgorithm {
      */
     public Chromosome createCrossOver(Chromosome father, Chromosome mother) {
     	int crossOverPoint = randomizer.nextInt(father.getChromosome().length);
-    	int[] childChromosome = new int[18];
+    	int[] childChromosome = new int[father.getChromosome().length];
     	
     	// copy values from father starting from crossoverpoint
     	for (int i = crossOverPoint; i < childChromosome.length; i++) {
@@ -158,11 +182,17 @@ public class GeneticAlgorithm {
      * @return Chromosome The selected Chromosome.
      */
     public Chromosome getRouletteChromosome(List<Chromosome> currentPopulation) {
-    	double totalChance = 0;
+    	double totalChance = 0.0d;
+    	
+    	double fullFitness = 0.0d;
+    	for (Chromosome chromosome : currentPopulation) {
+    		fullFitness += chromosome.getFitness();
+    	}
+    	
     	Chromosome parent = new Chromosome(new int[0]);
     	double wheel = randomizer.nextDouble();
     	for (int i = 0; i < currentPopulation.size(); i++) {
-    		totalChance += currentPopulation.get(i).getFitness();
+    		totalChance += (double) currentPopulation.get(i).getFitness() / fullFitness;
     		if (wheel <= totalChance) {
     			parent = currentPopulation.get(i);
     			break;
@@ -177,13 +207,8 @@ public class GeneticAlgorithm {
      * @param tsp The TSPData.
      */
     public void calculateFitness(List<Chromosome> pop, TSPData tsp) {
-    	int fitnessSum = 0;
     	for (Chromosome chromosome : pop) {
-    		fitnessSum += getTotalDistance(chromosome, tsp);
-    	}
-    	
-    	for (Chromosome chromosome : pop) {
-    		chromosome.setFitness(1.0d - (getTotalDistance(chromosome,tsp) / fitnessSum));
+    		chromosome.setFitness(1.0d / getTotalDistance(chromosome,tsp));
     	}
     }
     
@@ -207,10 +232,11 @@ public class GeneticAlgorithm {
      * @param initialPop List<Chromosome> Empty gen.
      */
     public void initializePopulation(List<Chromosome> initialPop) {
-    	Collections.fill(initialPop, new Chromosome(new int[]{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 16, 17}));
-    	for (Chromosome chromosome : initialPop) {
-    		chromosome.shuffle();
+    	for (int i = 0; i < popSize; i++) {
+    		initialPop.add(new Chromosome(new int[]{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 16, 17}));
     	}
+    	
+    	initialPop.forEach(Chromosome::shuffle);
     }
 
     /**

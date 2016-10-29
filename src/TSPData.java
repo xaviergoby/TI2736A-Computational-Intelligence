@@ -227,8 +227,8 @@ public class TSPData implements Serializable {
      * Assignment 2.a
      */
     public static void main(String[] args) throws IOException, ClassNotFoundException {
-        int antsPerGeneration = 25;
-        int numberOfGenerations = 100;
+        int antsPerGeneration = 5;
+        int numberOfGenerations = 10;
         double qualityFactor = 1000;
         double initialPheromoneValue = 1000;
         double evaporationFactor = 0.1;
