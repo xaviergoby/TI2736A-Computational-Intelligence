@@ -12,7 +12,7 @@ public class Maze {
     private int width;
     private int length;
     private int[][] walls;
-    private double[][] pheromones;
+    public double[][] pheromones;
 
     /**
      * Constructor of a maze
