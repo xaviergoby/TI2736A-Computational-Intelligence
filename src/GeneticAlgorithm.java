@@ -74,6 +74,10 @@ public class GeneticAlgorithm {
     public List<Chromosome> createNextGeneration(List<Chromosome> currentPopulation) {
     	List<Chromosome> nextGeneration = new ArrayList<>();
     	
+    	
+    	// elitism
+    	nextGeneration.add(getBestChromosome(currentPopulation));
+    	
     	while (nextGeneration.size() < popSize) {
     		
     		// make parents
@@ -259,7 +263,7 @@ public class GeneticAlgorithm {
         int populationSize = 1000;
         int generations = 1000;
         double crossOverChance = 0.8d;
-        double mutationChance = 0.1;
+        double mutationChance = 0.2d;
         String persistFile = "./tmp/productMatrixDist";
         TSPData tspData = TSPData.readFromFile(persistFile);
 
