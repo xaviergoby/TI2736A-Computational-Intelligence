@@ -51,8 +51,7 @@ public class Ant {
 			backtrack();
 			return;
 		}
-
-		Direction chosenDirection = null;
+		
 		double randomNumber = new Random().nextDouble();
 		double total = 0.0d;
 		SurroundingPheromone surroundingPheromone = maze.getSurroundingPheromone(currentPosition);
@@ -65,16 +64,15 @@ public class Ant {
 		for (Direction direction : directions.keySet()) {
 			total += (surroundingPheromone.get(direction) / totalSurroundingPheromone);
 			if (total >= randomNumber) {
-				chosenDirection = direction;
+				// We got a hit!
+				// Moving to the next tile...
+				route.add(direction);
+				directionStack.push(direction);
+				visitedMaze[currentPosition.getX()][currentPosition.getY()] = true; // Must happen before changing currentPosition!
+				currentPosition = currentPosition.add(direction);
 				break;
 			}
 		}
-
-		// Moving to the next tile...
-		route.add(chosenDirection);
-		directionStack.push(chosenDirection);
-		visitedMaze[currentPosition.getX()][currentPosition.getY()] = true; // Must happen before changing currentPosition!
-		currentPosition = currentPosition.add(chosenDirection);
 	}
 
 	/**
