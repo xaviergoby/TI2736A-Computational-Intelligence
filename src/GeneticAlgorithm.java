@@ -90,7 +90,7 @@ public class GeneticAlgorithm {
     		double mutation = randomizer.nextDouble();
     		
     		// clone the best parent in case no offspring can be generated
-    		Chromosome child = getFittestCandidate(father,mother);
+    		Chromosome child = getFittestCandidate(mother,father);
     		
     		if (crossOver <= crossOverChance) {
     			// one-point crossover
@@ -103,6 +103,7 @@ public class GeneticAlgorithm {
     		}
     		
     		nextGeneration.add(child);
+    		
     	}
     	
     	return nextGeneration;
@@ -130,31 +131,37 @@ public class GeneticAlgorithm {
      * @return Chromosome The child Chromosome.
      */
     public Chromosome createCrossOver(Chromosome father, Chromosome mother) {
-    	int crossOverPoint = randomizer.nextInt(father.getChromosome().length);
-    	int finalCrossOverPoint = randomizer.nextInt(father.getChromosome().length);
+    	int firstPoint = randomizer.nextInt(father.getChromosome().length);
+    	int secondPoint = randomizer.nextInt(father.getChromosome().length);
     	
-    	int[] childChromosome = new int[father.getChromosome().length];
+    	while (secondPoint == firstPoint) {
+    		secondPoint = randomizer.nextInt(father.getChromosome().length);
+    	}
     	
-    	int start = finalCrossOverPoint < crossOverPoint ? finalCrossOverPoint : crossOverPoint;
-    	int end = finalCrossOverPoint > crossOverPoint ? finalCrossOverPoint : crossOverPoint;
+    	int[] firstChildChromosome = new int[father.getChromosome().length];
+    	
+    	int start = firstPoint <  secondPoint ? firstPoint : secondPoint;
+    	int end = firstPoint > secondPoint ? firstPoint : secondPoint;
     	
     	// copy values from father starting from crossoverpoint
     	for (int i = start; i < end; i++) {
-    		childChromosome[i] = father.getChromosome()[i];
+    		firstChildChromosome[i] = father.getChromosome()[i];
     	}
     	
     	// fill mother values
-    	int childPointer = 0;
-    	for (int j = 0; j < mother.getChromosome().length; j++) {
-    		if (!hasGen(childChromosome, mother.getChromosome()[j])) {
-    			childChromosome[childPointer] = mother.getChromosome()[j];
+    	int childPointer = 0 == start ? end : 0;
+
+    	for (int j = 0; j < mother.getChromosome().length; j++) {    		
+    		if (!hasGen(firstChildChromosome, mother.getChromosome()[j])) {
+    			firstChildChromosome[childPointer] = mother.getChromosome()[j];
     			childPointer += 1;
-    			if (childPointer >= crossOverPoint) {
-    				break;
+    			if (childPointer == start) {
+    				childPointer = end;
     			}
     		}
     	}
-    	return new Chromosome(childChromosome);
+    	
+    	return new Chromosome(firstChildChromosome);
     }
     
     /**
@@ -214,7 +221,7 @@ public class GeneticAlgorithm {
      */
     public void calculateFitness(List<Chromosome> pop, TSPData tsp) {
     	for (Chromosome chromosome : pop) {
-    		chromosome.setFitness(1.0d / Math.pow(getTotalDistance(chromosome,tsp),1));
+    		chromosome.setFitness(1.0d / Math.pow(getTotalDistance(chromosome,tsp),2));
     	}
     }
     
@@ -249,15 +256,21 @@ public class GeneticAlgorithm {
      * Assignment 2.b
      */
     public static void main(String[] args) throws IOException, ClassNotFoundException {
-        int populationSize = 20;
-        int generations = 20;
-        double crossOverChance = 0.7d;
-        double mutationChance = 0.01d;
+        int populationSize = 50;
+        int generations = 50;
+        double crossOverChance = 0.8d;
+        double mutationChance = 0.1;
         String persistFile = "./tmp/productMatrixDist";
         TSPData tspData = TSPData.readFromFile(persistFile);
 
         GeneticAlgorithm ga = new GeneticAlgorithm(generations, populationSize, crossOverChance, mutationChance);
+
         int[] solution = ga.solveTSP(tspData);
+        
+        for (int i : solution) {
+        	System.out.print(i + " ");
+        }
+        
         tspData.writeActionFile(solution, "./data/TSP solution.txt");
     }
 }
