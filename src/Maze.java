@@ -9,8 +9,8 @@ import java.util.Scanner;
  */
 public class Maze {
 
-    private int width;
-    private int length;
+    public int width;
+    public int length;
     private int[][] walls;
     public double[][] pheromones;
 

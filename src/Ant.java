@@ -9,7 +9,7 @@ public class Ant {
     private Coordinate end;
     private Coordinate currentPosition;
     private Route route;
-    private List<Coordinate> visited;
+	private boolean[][] visitedMaze;
 	private Stack<Direction> directionStack;
 
     /**
@@ -23,7 +23,7 @@ public class Ant {
         this.end = spec.getEnd();
         this.currentPosition = start;
         this.route = new Route(start);
-        this.visited = new ArrayList<>();
+		this.visitedMaze = new boolean[maze.width][maze.length];
 		this.directionStack = new Stack<>();
     }
 
@@ -73,7 +73,7 @@ public class Ant {
 		// Moving to the next tile...
 		route.add(chosenDirection);
 		directionStack.push(chosenDirection);
-		visited.add(currentPosition); // Must happen before changing currentPosition!
+		visitedMaze[currentPosition.getX()][currentPosition.getY()] = true; // Must happen before changing currentPosition!
 		currentPosition = currentPosition.add(chosenDirection);
 	}
 
@@ -82,7 +82,7 @@ public class Ant {
 	 * This works for any number of junctions deep.
 	 */
 	private void backtrack() {
-		visited.add(currentPosition);
+		visitedMaze[currentPosition.getX()][currentPosition.getY()] = true;
 		int counter = 0;
 		while (getCompetingDirections(currentPosition).size() == 0) {
 			counter++;
@@ -102,16 +102,16 @@ public class Ant {
 	private EnumMap<Direction, Double> getCompetingDirections(Coordinate position) {
 		EnumMap<Direction, Double> directions = new EnumMap<>(Direction.class);
     	
-    	if (maze.isPassable(position.add(Direction.North)) && !visited.contains(position.add(Direction.North)))
+    	if (maze.isPassable(position.add(Direction.North)) && !visitedMaze[currentPosition.getX()][currentPosition.getY()-1])
 			directions.put(Direction.North, maze.getPheromone(position.add(Direction.North)));
 
-    	if (maze.isPassable(position.add(Direction.East)) && !visited.contains(position.add(Direction.East)))
+    	if (maze.isPassable(position.add(Direction.East)) && !visitedMaze[currentPosition.getX()+1][currentPosition.getY()])
 			directions.put(Direction.East, maze.getPheromone(position.add(Direction.East)));
 
-    	if (maze.isPassable(position.add(Direction.South)) && !visited.contains(position.add(Direction.South)))
+    	if (maze.isPassable(position.add(Direction.South)) && !visitedMaze[currentPosition.getX()][currentPosition.getY()+1])
 			directions.put(Direction.South, maze.getPheromone(position.add(Direction.South)));
 
-    	if (maze.isPassable(position.add(Direction.West)) && !visited.contains(position.add(Direction.West)))
+    	if (maze.isPassable(position.add(Direction.West)) && !visitedMaze[currentPosition.getX()-1][currentPosition.getY()])
 			directions.put(Direction.West, maze.getPheromone(position.add(Direction.West)));
     	
     	return directions;
