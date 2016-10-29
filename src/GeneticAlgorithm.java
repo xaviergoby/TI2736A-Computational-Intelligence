@@ -1,7 +1,5 @@
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
@@ -256,8 +254,8 @@ public class GeneticAlgorithm {
      * Assignment 2.b
      */
     public static void main(String[] args) throws IOException, ClassNotFoundException {
-        int populationSize = 50;
-        int generations = 50;
+        int populationSize = 1000;
+        int generations = 1000;
         double crossOverChance = 0.8d;
         double mutationChance = 0.1;
         String persistFile = "./tmp/productMatrixDist";
