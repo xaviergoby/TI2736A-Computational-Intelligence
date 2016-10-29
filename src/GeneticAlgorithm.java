@@ -54,6 +54,7 @@ public class GeneticAlgorithm {
     	Chromosome bestCandidate = getBestChromosome(population);
     	
     	System.out.println("Final fitness: " + bestCandidate.getFitness());
+    	System.out.println("Total length: " + getTotalDistance(bestCandidate, pd));
     	
         return bestCandidate.getChromosome();
     }
@@ -130,10 +131,15 @@ public class GeneticAlgorithm {
      */
     public Chromosome createCrossOver(Chromosome father, Chromosome mother) {
     	int crossOverPoint = randomizer.nextInt(father.getChromosome().length);
+    	int finalCrossOverPoint = randomizer.nextInt(father.getChromosome().length);
+    	
     	int[] childChromosome = new int[father.getChromosome().length];
     	
+    	int start = finalCrossOverPoint < crossOverPoint ? finalCrossOverPoint : crossOverPoint;
+    	int end = finalCrossOverPoint > crossOverPoint ? finalCrossOverPoint : crossOverPoint;
+    	
     	// copy values from father starting from crossoverpoint
-    	for (int i = crossOverPoint; i < childChromosome.length; i++) {
+    	for (int i = start; i < end; i++) {
     		childChromosome[i] = father.getChromosome()[i];
     	}
     	
@@ -208,7 +214,7 @@ public class GeneticAlgorithm {
      */
     public void calculateFitness(List<Chromosome> pop, TSPData tsp) {
     	for (Chromosome chromosome : pop) {
-    		chromosome.setFitness(1.0d / getTotalDistance(chromosome,tsp));
+    		chromosome.setFitness(1.0d / Math.pow(getTotalDistance(chromosome,tsp),1));
     	}
     }
     
