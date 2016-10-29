@@ -233,7 +233,7 @@ public class GeneticAlgorithm {
      */
     public void initializePopulation(List<Chromosome> initialPop) {
     	for (int i = 0; i < popSize; i++) {
-    		initialPop.add(new Chromosome(new int[]{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 16, 17}));
+    		initialPop.add(new Chromosome(new int[]{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17}));
     	}
     	
     	initialPop.forEach(Chromosome::shuffle);
@@ -249,6 +249,7 @@ public class GeneticAlgorithm {
         double mutationChance = 0.01d;
         String persistFile = "./tmp/productMatrixDist";
         TSPData tspData = TSPData.readFromFile(persistFile);
+
         GeneticAlgorithm ga = new GeneticAlgorithm(generations, populationSize, crossOverChance, mutationChance);
         int[] solution = ga.solveTSP(tspData);
         tspData.writeActionFile(solution, "./data/TSP solution.txt");
