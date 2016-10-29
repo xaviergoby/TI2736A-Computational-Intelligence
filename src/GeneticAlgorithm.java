@@ -196,7 +196,7 @@ public class GeneticAlgorithm {
     public double getTotalDistance(Chromosome order, TSPData tsp) {
     	double total = tsp.getStartDistances()[order.getChromosome()[0]];
     	for (int i = 0; i < order.getChromosome().length-1; i++) {
-    		total += (double) tsp.getDistances()[i][i+1];
+    		total += (double) tsp.getDistances()[order.getChromosome()[i]][order.getChromosome()[i+1]];
     	}
     	total += tsp.getEndDistances()[order.getChromosome().length-1];
     	return total;
