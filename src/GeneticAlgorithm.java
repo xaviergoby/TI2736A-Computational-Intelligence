@@ -1,6 +1,8 @@
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Random;
 
@@ -14,6 +16,8 @@ public class GeneticAlgorithm {
     private double crossOverChance;
     private double mutationChance;
     private Random randomizer;
+    public static boolean DEBUG = true;
+    private static double ELITISM_RATIO = 1.5d;
 
     public GeneticAlgorithm(int generations, int popSize, double crossOverChance, double mutationChance) {
         this.generations = generations;
@@ -32,26 +36,33 @@ public class GeneticAlgorithm {
     	List<Chromosome> population = new ArrayList<>();
     	initializePopulation(population);
     	
-    	System.out.println("Initial population size: " + population.size());
+    	calculateFitness(population, pd);
+    	double initialFitness = getAverageFitness(population);
+    	
+    	if (DEBUG) System.out.println("Initial population size: " + population.size());
     	
     	int n = 0;
     	while (n < generations) {
-    		System.out.println("Generation " + n);
-    		System.out.println("----------------");
+    		if (DEBUG) System.out.println("Generation " + n);
+    		if (DEBUG) System.out.println("----------------");
     		calculateFitness(population, pd);
-    		System.out.println("Average generation fitness: " + getAverageFitness(population));
-    		System.out.println("Generating generation " + (n+1) + "...");
+    		if (DEBUG) System.out.println("Average generation fitness: " + getAverageFitness(population));
+    		if (DEBUG) System.out.println("Generating generation " + (n+1) + "...");
     		population = createNextGeneration(population);
-    		System.out.println("Done");
-    		System.out.println("--------------------------------------");
+    		if (DEBUG) System.out.println("Done");
+    		if (DEBUG) System.out.println("--------------------------------------");
     		n += 1;
     	}
     	
     	calculateFitness(population, pd);
+    	
+    	System.out.println("Generation " + generations);
+		System.out.println("----------------");
     	System.out.println("Average generation fitness: " + getAverageFitness(population));
     	System.out.println("Get fittest candidate off last generation...");
     	Chromosome bestCandidate = getBestChromosome(population);
     	
+    	System.out.println("Start fitness: " + initialFitness);
     	System.out.println("Final fitness: " + bestCandidate.getFitness());
     	System.out.println("Total length: " + getTotalDistance(bestCandidate, pd));
     	
@@ -73,11 +84,15 @@ public class GeneticAlgorithm {
      */
     public List<Chromosome> createNextGeneration(List<Chromosome> currentPopulation) {
     	List<Chromosome> nextGeneration = new ArrayList<>();
+    	double averageGenFitness = getAverageFitness(currentPopulation);
     	
-    	
-    	// elitism
-    	nextGeneration.add(getBestChromosome(currentPopulation));
-    	
+    	// INCREASE CONVERGENCE RATE
+    	for (Chromosome c : currentPopulation) {
+    		if (c.getFitness() >= averageGenFitness * ELITISM_RATIO) {
+    			nextGeneration.add(c);
+    		}
+    	}
+     	
     	while (nextGeneration.size() < popSize) {
     		
     		// make parents
@@ -86,7 +101,7 @@ public class GeneticAlgorithm {
     		
     		// make sure mother and father are not the same
     		while (father.equals(mother)) {
-    			mother = getRouletteChromosome(currentPopulation);
+    			mother = getRouletteChromosome(currentPopulation); 
     		}
     		
     		double crossOver = randomizer.nextDouble();
@@ -224,8 +239,13 @@ public class GeneticAlgorithm {
      * @param tsp The TSPData.
      */
     public void calculateFitness(List<Chromosome> pop, TSPData tsp) {
+    	double totalDist = 0.0d;
+    	for (Chromosome c : pop) {
+    		totalDist += getTotalDistance(c,tsp);
+    	}
+    	
     	for (Chromosome chromosome : pop) {
-    		chromosome.setFitness(1.0d / Math.pow(getTotalDistance(chromosome,tsp),2));
+    		chromosome.setFitness((totalDist / Math.pow(getTotalDistance(chromosome,tsp),2) * 100));
     	}
     }
     
@@ -254,6 +274,9 @@ public class GeneticAlgorithm {
     	}
     	
     	initialPop.forEach(Chromosome::shuffle);
+    	
+    
+    	
     }
 
     /**
@@ -262,14 +285,12 @@ public class GeneticAlgorithm {
     public static void main(String[] args) throws IOException, ClassNotFoundException {
         int populationSize = 1000;
         int generations = 1000;
-        double crossOverChance = 0.8d;
-        double mutationChance = 0.2d;
+        double crossOverChance = 0.7d;
+        double mutationChance = 0.001d;
         String persistFile = "./tmp/productMatrixDist";
         TSPData tspData = TSPData.readFromFile(persistFile);
 
         GeneticAlgorithm ga = new GeneticAlgorithm(generations, populationSize, crossOverChance, mutationChance);
-        Chromosome a = new Chromosome(new int[]{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17});
-        Chromosome b = new Chromosome(new int[]{1, 2, 0, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17});
         int[] solution = ga.solveTSP(tspData);
         
         for (int i : solution) {
